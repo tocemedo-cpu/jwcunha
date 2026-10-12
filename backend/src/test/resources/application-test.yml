@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:5432/jwc_test}
+    username: ${TEST_DB_USER:jwc}
+    password: ${TEST_DB_PASSWORD:jwc_dev_only}
+  flyway:
+    clean-disabled: false
+app:
+  rate-limit:
+    max-requests: 1000
