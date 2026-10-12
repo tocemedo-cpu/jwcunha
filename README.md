@@ -86,6 +86,17 @@ See `frontend/src/assets/photos/README.md` for the shot list. Without photos a n
 ## Adding Portuguese
 Fill `frontend/src/content/pt.ts` (same shape as `en.ts`; missing keys fall back to English), then set `enabled: true` for `pt` in `frontend/src/i18n/locales.ts`. A language selector appears automatically. The form already submits the active language.
 
+## Deploy on Render
+`render.yaml` defines the whole stack: managed PostgreSQL 16 (`jwc-db`), a **private** Spring Boot service (`jwc-backend`) and the public Nginx + React service (`jwc-web`) that proxies `/api` to it. Render terminates TLS and provides the certificate.
+
+1. Push the repository to GitHub and in the Render dashboard choose **New → Blueprint**, pick the repository and branch `main`.
+2. When prompted, fill the `sync: false` values: `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH` (see *Admin account*; leave empty to keep the admin API locked), `ALLOWED_ORIGINS` (`https://your-domain`) and, optionally, `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_COMPANY_ADDRESS`. Contact values are build-time: changing them requires a redeploy of `jwc-web`.
+3. Wait for `jwc-db` → `jwc-backend` → `jwc-web` to become live. Flyway creates the schema on the backend's first start.
+4. **Custom domain:** `jwc-web` → Settings → Custom Domains → add your domain and create the DNS records Render shows (CNAME for `www`, ALIAS/ANAME or A record for the apex). Certificates are issued automatically once DNS resolves. Then set `ALLOWED_ORIGINS` to the final `https://` origin.
+5. Verify: open the site, submit the form, and check the request reached the database (Render dashboard → `jwc-db` → Connect, or `curl -u admin https://your-domain/api/admin/requests`).
+
+Notes: the backend and database must be in the same region (`frankfurt` in `render.yaml`; change it if you prefer another). Render's paid plans are required for private services and for a persistent database; check current plan names and prices in the dashboard, as `render.yaml` could not be validated against Render from the build environment. Rate limiting is in-memory, so keep `jwc-backend` at one instance.
+
 ## Production checklist
 1. Server with Docker + Compose; DNS A/AAAA record for the domain.
 2. Create `.env` with strong unique secrets; `PUBLIC_ORIGIN=https://your-domain`; set `HTTP_PORT` (e.g. `8080`) if a host proxy fronts the stack.

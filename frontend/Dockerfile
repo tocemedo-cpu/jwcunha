@@ -10,6 +10,8 @@ ENV VITE_CONTACT_EMAIL=$VITE_CONTACT_EMAIL VITE_CONTACT_PHONE=$VITE_CONTACT_PHON
 RUN npm run build
 
 FROM nginx:1.27-alpine
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+# Rendered to /etc/nginx/conf.d/default.conf by the base image's entrypoint (envsubst).
+COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+ENV PORT=80 BACKEND_ADDR=backend:8080
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
