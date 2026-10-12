@@ -1,8 +1,9 @@
+# Template: ${PORT} and ${BACKEND_ADDR} are substituted at container start (envsubst). Other $vars are nginx's own.
 # Served inside the frontend container. Static SPA + reverse proxy to the Spring Boot API.
 # TLS is expected to be terminated by an upstream load balancer / reverse proxy (see README).
 
 server {
-    listen 80;
+    listen ${PORT};
     server_name _;
     server_tokens off;
 
@@ -12,6 +13,7 @@ server {
     client_max_body_size 64k;
 
     # Security headers (CSP allows only same-origin assets; fonts are self-hosted).
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always; # ignored over plain HTTP
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
@@ -22,7 +24,7 @@ server {
     gzip_types text/css application/javascript application/json image/svg+xml;
 
     location /api/ {
-        proxy_pass http://backend:8080;
+        proxy_pass http://${BACKEND_ADDR};
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -34,6 +36,7 @@ server {
     location /assets/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         add_header X-Content-Type-Options "nosniff" always;
         try_files $uri =404;
     }
@@ -41,6 +44,7 @@ server {
     # SPA fallback; index.html must always be revalidated.
     location / {
         add_header Cache-Control "no-cache";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Frame-Options "DENY" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;

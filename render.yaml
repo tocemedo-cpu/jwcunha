@@ -1,0 +1,68 @@
+# Render Blueprint: PostgreSQL + private Spring Boot API + public Nginx/React web service.
+# Create with: Dashboard -> New -> Blueprint -> select this repository. Secrets marked `sync: false`
+# are asked for during creation. See README, "Deploy on Render".
+# NOTE: written from Render's documented Blueprint format; validate it in the dashboard on first use
+# (plan names and regions change over time).
+
+databases:
+  - name: jwc-db
+    databaseName: jwcunha
+    user: jwcunha
+    plan: basic-256mb
+    region: frankfurt
+    postgresMajorVersion: "16"
+    ipAllowList: [] # no public access; only Render services in the same region/account can connect
+
+services:
+  # Spring Boot API. Private: reachable only by the web service, never from the internet.
+  - type: pserv
+    name: jwc-backend
+    runtime: docker
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DB_HOST
+        fromDatabase: { name: jwc-db, property: host }
+      - key: DB_PORT
+        fromDatabase: { name: jwc-db, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: jwc-db, property: database }
+      - key: DB_USER
+        fromDatabase: { name: jwc-db, property: user }
+      - key: DB_PASSWORD
+        fromDatabase: { name: jwc-db, property: password }
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD_HASH # bcrypt hash, see README "Admin account"
+        sync: false
+      - key: ALLOWED_ORIGINS # https://your-domain (same-origin via Nginx, kept for defence in depth)
+        sync: false
+      - key: RATE_LIMIT_MAX
+        value: "5"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "600"
+
+  # Public site: Nginx serves the React build and proxies /api to the private backend.
+  - type: web
+    name: jwc-web
+    runtime: docker
+    region: frankfurt
+    plan: starter
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: BACKEND_ADDR
+        fromService: { type: pserv, name: jwc-backend, property: hostport }
+      - key: VITE_CONTACT_EMAIL # build-time, optional
+        sync: false
+      - key: VITE_CONTACT_PHONE
+        sync: false
+      - key: VITE_COMPANY_ADDRESS
+        sync: false

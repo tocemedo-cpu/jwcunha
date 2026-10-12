@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   shutdown: graceful
   forward-headers-strategy: native
   error:
@@ -10,7 +10,7 @@ spring:
   application:
     name: jwcunha-website
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/jwc_dev}
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:jwc_dev}}
     username: ${DB_USER:}
     password: ${DB_PASSWORD:}
   jpa:
