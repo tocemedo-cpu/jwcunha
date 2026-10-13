@@ -58,6 +58,16 @@ describe('company contact details', () => {
     links.forEach((a) => expect(a).toHaveAttribute('href', 'mailto:jw@cunha.ao'));
   });
 
+  it('lets the build override the email and falls back to the default when the value is empty', async () => {
+    vi.stubEnv('VITE_CONTACT_EMAIL', ' novo@cunha.ao ');
+    vi.resetModules();
+    expect((await import('../lib/company')).company.email).toBe('novo@cunha.ao');
+    vi.stubEnv('VITE_CONTACT_EMAIL', '');
+    vi.resetModules();
+    expect((await import('../lib/company')).company.email).toBe('jw@cunha.ao');
+    vi.unstubAllEnvs();
+  });
+
   it('publishes no telephone number anywhere on the site', () => {
     for (const path of ['/', '/contact', '/about']) {
       const { container, unmount } = renderAt(path);

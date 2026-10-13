@@ -61,3 +61,7 @@ services:
     envVars:
       - key: BACKEND_ADDR
         fromService: { type: pserv, name: jwc-backend, property: hostport }
+      - key: VITE_CONTACT_EMAIL # build-time, optional; empty keeps jw@cunha.ao
+        sync: false
+      - key: VITE_COMPANY_ADDRESS # build-time, optional; empty keeps the profile address
+        sync: false
