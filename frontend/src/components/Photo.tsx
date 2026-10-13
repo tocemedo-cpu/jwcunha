@@ -1,5 +1,4 @@
 import { useI18n } from '../i18n/I18nProvider';
-import { illustrativePhotos } from '../lib/photos';
 
 type Props = {
   name: string;
@@ -33,7 +32,6 @@ export default function Photo({ name, brief, ratio = '3/2', className = '', prio
     return (
       <figure className={`photo ${className}`} style={style}>
         <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'} decoding="async" />
-        {illustrativePhotos.has(name) && <figcaption>{c.site.illustrative}</figcaption>}
       </figure>
     );
   }

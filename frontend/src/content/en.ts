@@ -30,7 +30,6 @@ export const en = {
     short: 'J&W Cunha',
     descriptor: 'Integrated space management',
     skip: 'Skip to content',
-    illustrative: 'Illustrative image',
     metaDescription:
       'Jelson & Wilson Cunha — facility management, property management, waste management and products & supplies for oil & gas operators, contractors, logistics bases and industrial projects.',
   },
@@ -50,7 +49,7 @@ export const en = {
   },
   photoAlt: {
     'home-hero': 'Two technicians in hard hats and uniforms reviewing a tablet outside a modern building',
-    about: 'Company team reviewing plans on site',
+    about: 'Two technicians reviewing plans and a tablet on site',
     'facility-management': 'Technician with a tablet inspecting plant room equipment and green-painted pipework',
     'property-management': 'Property management on an industrial site',
     'waste-management': 'Waste management on an industrial site',

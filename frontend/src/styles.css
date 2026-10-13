@@ -119,7 +119,6 @@ p { margin: 0 0 1em; }
 .photo--plate { background: linear-gradient(0deg, var(--grey-2), var(--grey-2)); border-bottom: 4px solid var(--green); position: relative; }
 .hero .photo--plate { background: var(--navy-2); }
 .photo { position: relative; }
-.photo figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: .45rem .8rem; font-size: .72rem; line-height: 1.3; color: var(--white); background: rgba(16, 47, 66, .78); }
 .hero__photo img { object-position: 76% center; }
 .photo__brief { position: absolute; inset: auto 1rem 1rem 1rem; font-size: .75rem; line-height: 1.35; color: var(--muted); }
 .hero .photo__brief { color: #b8c5d8; }
