@@ -61,9 +61,3 @@ services:
     envVars:
       - key: BACKEND_ADDR
         fromService: { type: pserv, name: jwc-backend, property: hostport }
-      - key: VITE_CONTACT_EMAIL # build-time, optional
-        sync: false
-      - key: VITE_CONTACT_PHONE
-        sync: false
-      - key: VITE_COMPANY_ADDRESS
-        sync: false

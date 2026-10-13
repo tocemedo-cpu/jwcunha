@@ -362,9 +362,7 @@ export const en = {
     intro:
       'Use the form to request a proposal or ask a question. Your request is stored securely and reviewed by our team. Please do not include confidential commercial documents in this form.',
     detailsTitle: 'Company details',
-    detailsMissing: 'Direct contact details are provided in our reply to your request.',
     email: 'Email',
-    phone: 'Phone',
     address: 'Address',
     form: {
       title: 'Proposal request',

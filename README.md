@@ -22,7 +22,7 @@ docker-compose.yml, .env.example
 - Admin API (HTTP Basic, single account from environment, no default credentials; locked when unset):
   `GET /api/admin/requests?page=0&size=20`, `GET /api/admin/requests/{id}`, `PATCH /api/admin/requests/{id}/status` with `{"status":"NEW|IN_REVIEW|RESPONDED|CLOSED"}`.
 - Everything else under `/api` is denied; only `/actuator/health` is exposed.
-- No client names, contracts, certifications, licences, statistics or years of experience are published. Public email/phone/address appear only if configured.
+- No client names, contracts, certifications, licences, statistics or years of experience are published. The public email, address and tax ID are fixed in `frontend/src/lib/company.ts`; no telephone number is published until the company supplies one.
 
 ## Run with Docker (recommended)
 
@@ -87,7 +87,7 @@ See `frontend/src/assets/photos/README.md` for the shot list. Without photos a n
 Taken from the company's commercial profile (Oct 2026): JWC logo, brand green `#007E5A` (`--green`) and navy `#102F42` (`--navy`), bold sans-serif headlines (IBM Plex Sans, self-hosted), tagline *Cuidamos dos espaços. Valorizamos o património.* / *We care for spaces. We add value to property.*
 - Logos: `frontend/src/assets/brand/logo.png` (light backgrounds) and `logo-light.png` (navy backgrounds), favicons in `frontend/public/`. The source logo is a raster image (2172 px wide); replace with an SVG if the company has one.
 - Service names follow the profile: Facility Management, Property Management, Waste Management, Produtos e Fornecimentos / Products & Supplies, each with its deliverables.
-- Company identification (legal name, NIF, address, licence note) comes from the commercial profile and the public email (`jw@cunha.ao`) was supplied by the company; all are in `frontend/src/lib/company.ts`. The email and address can be overridden at build time with `PUBLIC_CONTACT_EMAIL` / `PUBLIC_COMPANY_ADDRESS`; the phone number stays hidden until `PUBLIC_CONTACT_PHONE` is set.
+- Company identification (legal name, NIF, address, licence note) comes from the commercial profile, and the public email (`jw@cunha.ao`) was supplied by the company. They live in `frontend/src/lib/company.ts`, not in build-time variables, so a stale deployment setting cannot override them. To publish a phone number, add it to that file together with its display in the contact page and footer (no telephone is shown today).
 - Portuguese uses the company's own orthography (pre-1990: *correctiva*, *activos*, *Projecto*).
 - The hero photograph is the illustrative image supplied in the profile and is captioned as such.
 
@@ -102,7 +102,7 @@ The site is bilingual: **English** and **European Portuguese**. A visible `EN | 
 `render.yaml` defines the whole stack: managed PostgreSQL 16 (`jwc-db`), a **private** Spring Boot service (`jwc-backend`) and the public Nginx + React service (`jwc-web`) that proxies `/api` to it. Render terminates TLS and provides the certificate.
 
 1. Push the repository to GitHub and in the Render dashboard choose **New → Blueprint**, pick the repository and branch `main`.
-2. When prompted, fill the `sync: false` values: `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH` (see *Admin account*; leave empty to keep the admin API locked), `ALLOWED_ORIGINS` (`https://your-domain`) and, optionally, `VITE_CONTACT_EMAIL`, `VITE_CONTACT_PHONE`, `VITE_COMPANY_ADDRESS`. Contact values are build-time: changing them requires a redeploy of `jwc-web`.
+2. When prompted, fill the `sync: false` values: `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH` (see *Admin account*; leave empty to keep the admin API locked), `ALLOWED_ORIGINS` (`https://your-domain`).
 3. Wait for `jwc-db` → `jwc-backend` → `jwc-web` to become live. Flyway creates the schema on the backend's first start.
 4. **Custom domain:** `jwc-web` → Settings → Custom Domains → add your domain and create the DNS records Render shows (CNAME for `www`, ALIAS/ANAME or A record for the apex). Certificates are issued automatically once DNS resolves. Then set `ALLOWED_ORIGINS` to the final `https://` origin.
 5. Verify: open the site, submit the form, and check the request reached the database (Render dashboard → `jwc-db` → Connect, or `curl -u admin https://your-domain/api/admin/requests`).
@@ -113,7 +113,7 @@ Notes: the backend and database must be in the same region (`frankfurt` in `rend
 1. Server with Docker + Compose; DNS A/AAAA record for the domain.
 2. Create `.env` with strong unique secrets; `PUBLIC_ORIGIN=https://your-domain`; set `HTTP_PORT` (e.g. `8080`) if a host proxy fronts the stack.
 3. Terminate TLS in front of the `frontend` container (Caddy/Traefik/host Nginx with Let's Encrypt, or a cloud load balancer) and forward `X-Forwarded-*` headers; redirect HTTP→HTTPS and enable HSTS there.
-4. Add real photography, contact details (`PUBLIC_*`) and a privacy notice / terms reviewed by the company's legal adviser.
+4. Add real photography and a privacy notice / terms reviewed by the company's legal adviser.
 5. Back up the `pgdata` volume (`pg_dump` on a schedule) and test a restore.
 6. Keep the database unpublished (Compose does not expose it) and restrict SSH/firewall to 80/443.
 7. Monitor `/actuator/health`; ship container logs somewhere durable. Rebuild images regularly for security updates.

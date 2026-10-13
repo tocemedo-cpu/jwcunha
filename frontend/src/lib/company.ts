@@ -1,13 +1,11 @@
 /**
- * Company identification published on the site, taken from the company's commercial profile.
- * Email and address have defaults and can be overridden at build time (see .env.example); the phone number is shown
- * only when configured, so no made-up details are ever published.
+ * Company identification published on the site, taken from the company's commercial profile and the public email
+ * supplied by the company. These values live here (not in build-time variables) so a stale deployment setting can
+ * never override them. No telephone number is published until the company supplies one.
  */
 export const company = {
   legalName: 'Jelson & Wilson Cunha – Comércio e Prestação de Serviços, Lda.',
   taxId: '5001205536',
-  email: import.meta.env.VITE_CONTACT_EMAIL?.trim() || 'jw@cunha.ao',
-  phone: import.meta.env.VITE_CONTACT_PHONE?.trim() || '',
-  address:
-    import.meta.env.VITE_COMPANY_ADDRESS?.trim() || 'Rua 53, Projecto Nova Vida, n.º E 808, Kilamba Kiaxi, Luanda, Angola',
+  email: 'jw@cunha.ao',
+  address: 'Rua 53, Projecto Nova Vida, n.º E 808, Kilamba Kiaxi, Luanda, Angola',
 };

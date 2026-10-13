@@ -329,9 +329,7 @@ export const pt: DeepPartial<Content> = {
     intro:
       'Use o formulário para pedir uma proposta ou colocar uma questão. O seu pedido é guardado em segurança e analisado pela nossa equipa. Não inclua neste formulário documentos comerciais confidenciais.',
     detailsTitle: 'Dados da empresa',
-    detailsMissing: 'Os contactos directos são indicados na nossa resposta ao seu pedido.',
     email: 'Email',
-    phone: 'Telefone',
     address: 'Morada',
     form: {
       title: 'Pedido de proposta',

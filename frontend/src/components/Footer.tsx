@@ -35,7 +35,6 @@ export default function Footer() {
           <h2 className="site-footer__h">{c.footer.contactTitle}</h2>
           <ul>
             {company.email && <li><a href={`mailto:${company.email}`}>{company.email}</a></li>}
-            {company.phone && <li><a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a></li>}
             <li>{company.address}</li>
             <li><Link to="/contact">{c.nav.cta}</Link></li>
           </ul>
