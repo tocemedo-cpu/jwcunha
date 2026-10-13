@@ -11,8 +11,8 @@ If an image shows people who are not real staff, keep the `alt` text neutral (se
 | `facility-management` | Facility Management | 3:2 | done |
 | `about` | About | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
 | `property-management` | Property Management | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
-| `waste-management` | Waste Management | 3:2 | to do |
-| `supplies-procurement` | Products & Supplies | 3:2 | to do |
+| `waste-management` | Waste Management | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
+| `supplies-procurement` | Products & Supplies | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
 | `sectors` | Sectors | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
 | `hse` | HSE & Quality | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
 | `mobilisation` | Mobilisation | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
