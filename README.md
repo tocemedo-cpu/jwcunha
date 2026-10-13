@@ -87,7 +87,7 @@ See `frontend/src/assets/photos/README.md` for the shot list. Without photos a n
 Taken from the company's commercial profile (Oct 2026): JWC logo, brand green `#007E5A` (`--green`) and navy `#102F42` (`--navy`), bold sans-serif headlines (IBM Plex Sans, self-hosted), tagline *Cuidamos dos espaços. Valorizamos o património.* / *We care for spaces. We add value to property.*
 - Logos: `frontend/src/assets/brand/logo.png` (light backgrounds) and `logo-light.png` (navy backgrounds), favicons in `frontend/public/`. The source logo is a raster image (2172 px wide); replace with an SVG if the company has one.
 - Service names follow the profile: Facility Management, Property Management, Waste Management, Produtos e Fornecimentos / Products & Supplies, each with its deliverables.
-- Company identification (legal name, NIF, address, licence note) comes from the profile (`frontend/src/lib/company.ts`); email and phone stay empty until configured.
+- Company identification (legal name, NIF, address, licence note) comes from the commercial profile and the public email (`jw@cunha.ao`) was supplied by the company; all are in `frontend/src/lib/company.ts`. The email and address can be overridden at build time with `PUBLIC_CONTACT_EMAIL` / `PUBLIC_COMPANY_ADDRESS`; the phone number stays hidden until `PUBLIC_CONTACT_PHONE` is set.
 - Portuguese uses the company's own orthography (pre-1990: *correctiva*, *activos*, *Projecto*).
 - The hero photograph is the illustrative image supplied in the profile and is captioned as such.
 

@@ -50,6 +50,16 @@ describe('routing', () => {
   });
 });
 
+describe('company contact details', () => {
+  it('publishes the email as a mailto link on the contact page and in the footer', () => {
+    renderAt('/contact');
+    const links = screen.getAllByRole('link', { name: 'jw@cunha.ao' });
+    expect(links.length).toBeGreaterThanOrEqual(2);
+    links.forEach((a) => expect(a).toHaveAttribute('href', 'mailto:jw@cunha.ao'));
+    expect(screen.queryByText(/contactos diretos|direct contact details/i)).not.toBeInTheDocument();
+  });
+});
+
 describe('validation', () => {
   it('flags every required field', () => {
     const e = validate(emptyForm, en.contact.form.errors);
