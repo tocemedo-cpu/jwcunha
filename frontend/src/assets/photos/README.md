@@ -1,19 +1,31 @@
 # Photography
 
-Place real photographs here; the site picks them up automatically by file name (`.jpg`, `.jpeg`, `.webp`, `.png`, `.avif`).
-Use only images the company owns or is licensed to use, and people who have consented. Illustrative images are listed in `src/lib/photos.ts` and get an "Illustrative image" caption; remove the name from that list when swapping in a real photograph. Until a file exists, a neutral
-placeholder plate is shown (in `npm run dev` it also prints the brief).
+Drop images here as `<name>.jpg` (`.jpeg`, `.webp`, `.png`, `.avif` also work); the site picks them up by file name.
+Use only images the company owns or is licensed to use. Until a file exists a neutral placeholder plate is shown
+(in `npm run dev` it also prints the brief). Export at ~1600 px on the long edge, compressed (< 400 KB).
+If an image shows people who are not real staff, keep the `alt` text neutral (see `photoAlt` in `content/en.ts` / `pt.ts`).
 
-| File name | Used on | Brief |
-|---|---|---|
-| `home-hero` | Home (portrait 4:5) | **Supplied** (company commercial profile, marked "illustrative image" on the site). Replace with a real photograph when available |
-| `about` | About (3:2) | Real team members in PPE reviewing a plan on site |
-| `facility-management` | Facility Management (3:2) | **Supplied** (illustrative image, captioned). Replace with a real photograph when available |
-| `property-management` | Property Management (3:2) | Office or accommodation building at a base |
-| `waste-management` | Waste Management (3:2) | Segregated, labelled waste storage area |
-| `supplies-procurement` | Supplies & Procurement (3:2) | Warehouse / laydown, goods-in check |
-| `sectors` | Sectors (16:9) | Tanks, pipework, cranes at a respectful distance |
-| `hse` | HSE & Quality (16:9) | Worker in full PPE at a permit-controlled location |
-| `mobilisation` | Mobilisation (16:9) | Vehicles and crew arriving at a site gate |
+| File name | Page | Ratio | Status |
+|---|---|---|---|
+| `home-hero` | Home | portrait 4:5 (cropped from landscape) | done |
+| `facility-management` | Facility Management | 3:2 | done |
+| `about` | About | 3:2 | to do |
+| `property-management` | Property Management | 3:2 | to do |
+| `waste-management` | Waste Management | 3:2 | to do |
+| `supplies-procurement` | Products & Supplies | 3:2 | to do |
+| `sectors` | Sectors | 16:9 | to do |
+| `hse` | HSE & Quality | 16:9 | to do |
+| `mobilisation` | Mobilisation | 16:9 | to do |
 
-Export at ~2000 px on the long edge, compressed (< 400 KB each). Also update the `alt` text in the page if the image differs.
+## Prompts (same look as the supplied images)
+Common style: *photorealistic documentary photograph, natural daylight, sharp, no text, no logos, no watermarks;
+workers in navy-blue coveralls with green and silver reflective bands, white hard hats, safety glasses and grey gloves
+where appropriate; brand green (#007E5A) accents; modern Luanda setting (palms, tropical plants, glass-and-stone buildings).*
+
+- **about** (3:2): two technicians, a woman and a man, reviewing building plans and a tablet on a site walkway, modern office building behind.
+- **property-management** (3:2): a technician with a clipboard and tablet doing an inspection round at the entrance of a well-kept commercial building and condominium, landscaped gardens.
+- **waste-management** (3:2): a technician beside neatly segregated, colour-coded and labelled waste containers in a clean, covered storage area, recording quantities on a tablet. No dirt or spills.
+- **supplies-procurement** (3:2): a technician checking goods against a delivery note in a tidy warehouse, racking with boxed consumables, PPE and tools, a pallet being received.
+- **sectors** (16:9): wide view of an industrial base at a respectful distance: storage tanks, pipework, a crane and a logistics yard, clear sky, no people in the foreground.
+- **hse** (16:9): a worker in full PPE (helmet, glasses, gloves, high-visibility coverall) checking a permit-to-work board or a safety checklist at a controlled work area, barriers and signage (no readable text).
+- **mobilisation** (16:9): a van and a crew arriving at a site gate with equipment being unloaded, a supervisor with a tablet greeting them, early morning light.

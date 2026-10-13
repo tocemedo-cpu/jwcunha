@@ -13,7 +13,6 @@ export const pt: DeepPartial<Content> = {
     short: 'J&W Cunha',
     descriptor: 'Gestão integrada de espaços',
     skip: 'Saltar para o conteúdo',
-    illustrative: 'Imagem ilustrativa',
     metaDescription:
       'Jelson & Wilson Cunha — gestão de instalações, gestão de propriedades, gestão de resíduos e produtos e fornecimentos para operadores de petróleo e gás, empreiteiros, bases logísticas e projectos industriais.',
   },
@@ -33,7 +32,7 @@ export const pt: DeepPartial<Content> = {
   },
   photoAlt: {
     'home-hero': 'Dois técnicos de capacete e farda a consultar um tablet junto a um edifício moderno',
-    about: 'Equipa da empresa a analisar plantas no local',
+    about: 'Dois técnicos a analisar plantas e um tablet no local',
     'facility-management': 'Técnico com um tablet a inspeccionar equipamento e tubagens pintadas de verde numa casa das máquinas',
     'property-management': 'Gestão de propriedades num local industrial',
     'waste-management': 'Gestão de resíduos num local industrial',
