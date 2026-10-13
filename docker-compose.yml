@@ -40,7 +40,11 @@ services:
     networks: [internal]
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_CONTACT_EMAIL: ${PUBLIC_CONTACT_EMAIL:-}
+        VITE_COMPANY_ADDRESS: ${PUBLIC_COMPANY_ADDRESS:-}
     restart: unless-stopped
     depends_on:
       backend:
