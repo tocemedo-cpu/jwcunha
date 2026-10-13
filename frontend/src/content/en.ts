@@ -14,6 +14,7 @@ export type ServiceContent = {
   intro: string[];
   photo: string;
   photoBrief: string;
+  deliverables: string;
   scopeTitle: string;
   scope: { title: string; text: string }[];
   approachTitle: string;
@@ -27,10 +28,10 @@ export const en = {
   site: {
     name: 'Jelson & Wilson Cunha',
     short: 'J&W Cunha',
-    descriptor: 'Industrial support services',
+    descriptor: 'Integrated space management',
     skip: 'Skip to content',
     metaDescription:
-      'Jelson & Wilson Cunha — facility management, property management, waste management and supplies & procurement for oil & gas operators, contractors, logistics bases and industrial projects.',
+      'Jelson & Wilson Cunha — facility management, property management, waste management and products & supplies for oil & gas operators, contractors, logistics bases and industrial projects.',
   },
   nav: {
     home: 'Home',
@@ -47,22 +48,23 @@ export const en = {
     language: 'Language',
   },
   photoAlt: {
-    'home-hero': 'Industrial support base at first light',
+    'home-hero': 'Two technicians in hard hats and uniforms reviewing a tablet outside a modern building',
     about: 'Company team reviewing plans on site',
     'facility-management': 'Facility management on an industrial site',
     'property-management': 'Property management on an industrial site',
     'waste-management': 'Waste management on an industrial site',
-    'supplies-procurement': 'Supplies and procurement on an industrial site',
+    'supplies-procurement': 'Products and supplies on an industrial site',
     sectors: 'Industrial facility with tanks and pipework',
     hse: 'Worker in PPE at a controlled work location',
     mobilisation: 'Vehicles and crew arriving at a site gate',
   } as Record<string, string>,
   home: {
-    title: 'Support services for oil & gas operations',
-    kicker: 'Oil & Gas · Industrial support',
-    headline: 'The support services that keep operating sites, bases and projects running.',
+    title: 'Integrated space management',
+    kicker: 'Integrated space management',
+    headline: 'We care for spaces. We add value to property.',
     lead:
-      'Jelson & Wilson Cunha delivers facility management, property management, waste management and supplies & procurement to oil & gas operators, contractors, logistics bases and industrial projects.',
+      'Jelson & Wilson Cunha delivers facility management, property management, waste management and products & supplies to oil & gas operators, contractors, logistics bases and industrial projects, as well as to commercial buildings, condominiums, hospitality and institutions.',
+    photoCaption: 'Illustrative image',
     primaryCta: 'Request a proposal',
     secondaryCta: 'See how we mobilise',
     photoBrief: 'Wide exterior of an industrial base or yard at first light, equipment and buildings in view.',
@@ -89,7 +91,7 @@ export const en = {
     headline: 'A practical partner for the services behind industrial operations.',
     intro: [
       'Jelson & Wilson Cunha provides the support services that allow oil & gas operations, logistics bases and industrial projects to concentrate on their core work.',
-      'We are organised around four service lines — facility management, property management, waste management, and supplies & procurement — delivered with a consistent management approach and a clear line of accountability.',
+      'We are organised around four service lines — facility management, property management, waste management, and products & supplies — delivered with a consistent management approach and a clear line of accountability.',
     ],
     photoBrief: 'Team members in company-issued PPE reviewing a plan on site (use real staff, with consent).',
     principlesTitle: 'How we work',
@@ -119,6 +121,7 @@ export const en = {
   },
   services: {
     index: 'Services',
+    deliverablesLabel: 'Deliverables:',
     whatTitle: 'Scope of services',
     approachLabel: 'How we deliver',
     relatedTitle: 'Other services',
@@ -131,7 +134,8 @@ export const en = {
       title: 'Facility Management',
       kicker: 'Service 01',
       summary:
-        'Integrated operation and maintenance of buildings, camps, offices and site utilities, so that people can work and live safely on site.',
+        'Preventive and corrective maintenance, cleaning, hygiene, gardening and coordination of support services.',
+      deliverables: 'plan, work orders and report.',
       intro: [
         'We manage the day-to-day operation of site facilities: offices, workshops, warehouses, accommodation and the services that support them.',
         'Scope is built around the site. Some clients need a full integrated contract; others need a defined package such as cleaning, grounds or planned maintenance.',
@@ -162,7 +166,8 @@ export const en = {
       title: 'Property Management',
       kicker: 'Service 02',
       summary:
-        'Administration and care of operational real estate: leased bases, yards, offices and housing, from condition records to tenant and landlord coordination.',
+        'Inspections, upkeep, incident management, suppliers and expenses for properties and condominiums.',
+      deliverables: 'inventory, incident log and accounts.',
       intro: [
         'Industrial projects often rely on leased land, buildings and housing. We administer these assets on the client’s behalf so that obligations are tracked and conditions are documented.',
         'Our role is administrative and supervisory; specialist works are procured and managed through the same controlled process we use for supplies.',
@@ -193,7 +198,8 @@ export const en = {
       title: 'Waste Management',
       kicker: 'Service 03',
       summary:
-        'Segregation, storage, internal handling and tracked disposal of site waste, aligned with client procedures and applicable regulation.',
+        'Diagnosis, segregation, packaging and documented routing with licensed operators.',
+      deliverables: 'waste map and proof of destination.',
       intro: [
         'Industrial sites produce a range of waste streams, each with its own handling and disposal requirements. We organise collection and segregation at source and keep the paperwork that proves where the waste went.',
         'Treatment and final disposal are carried out through suitably authorised third-party facilities, selected with and approved by the client.',
@@ -220,11 +226,12 @@ export const en = {
     supplies: service({
       slug: 'supplies-procurement',
       path: '/services/supplies-procurement',
-      navLabel: 'Supplies & Procurement',
-      title: 'Supplies & Procurement',
+      navLabel: 'Products & Supplies',
+      title: 'Products & Supplies',
       kicker: 'Service 04',
       summary:
-        'Sourcing, purchasing, expediting and delivery of site consumables, materials and equipment, against specification and delivery date.',
+        'Cleaning products, consumables, PPE, containers, tools and parts, according to specification and availability.',
+      deliverables: 'checked supply and technical documentation.',
       intro: [
         'Reliable supply is a matter of specification, sourcing discipline and follow-up. We act as a procurement desk for the client, from request to receipt on site.',
         'We purchase against written requirements and report on status, so the client sees what has been ordered, what has shipped and what is late.',
@@ -272,6 +279,10 @@ export const en = {
       {
         title: 'Industrial projects',
         text: 'Temporary and long-term project sites benefit from a single party coordinating the services that surround the main works.',
+      },
+      {
+        title: 'Commercial buildings, condominiums, hospitality and institutions',
+        text: 'The same integrated approach applies to offices, commercial buildings, condominiums, hotels and institutions that need their premises, assets and supplies managed under a single plan.',
       },
     ],
     noteTitle: 'Where we do not operate',
@@ -382,7 +393,7 @@ export const en = {
         FACILITY_MANAGEMENT: 'Facility Management',
         PROPERTY_MANAGEMENT: 'Property Management',
         WASTE_MANAGEMENT: 'Waste Management',
-        SUPPLIES_PROCUREMENT: 'Supplies & Procurement',
+        SUPPLIES_PROCUREMENT: 'Products & Supplies',
         MOBILISATION: 'Mobilisation',
         OTHER: 'Other / not sure',
       } as Record<string, string>,
@@ -404,7 +415,8 @@ export const en = {
     home: 'Return to the home page',
   },
   footer: {
-    tagline: 'Facility, property, waste and supply services for oil & gas operations.',
+    tagline: 'Integrated space management.',
+    scopeNote: 'Specialised scope subject to the applicable licences. Visits by appointment.',
     servicesTitle: 'Services',
     companyTitle: 'Company',
     contactTitle: 'Contact',

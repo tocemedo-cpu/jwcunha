@@ -6,7 +6,7 @@ placeholder plate is shown (in `npm run dev` it also prints the brief).
 
 | File name | Used on | Brief |
 |---|---|---|
-| `home-hero` | Home (portrait 4:5) | Industrial base or yard at first light, equipment and buildings in view |
+| `home-hero` | Home (portrait 4:5) | **Supplied** (company commercial profile, marked "illustrative image" on the site). Replace with a real photograph when available |
 | `about` | About (3:2) | Real team members in PPE reviewing a plan on site |
 | `facility-management` | Facility Management (3:2) | Technician inspecting building services / workshop |
 | `property-management` | Property Management (3:2) | Office or accommodation building at a base |

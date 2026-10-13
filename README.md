@@ -83,6 +83,14 @@ cd frontend && npm test && npm run build
 ## Photography
 See `frontend/src/assets/photos/README.md` for the shot list. Without photos a neutral placeholder is shown.
 
+## Brand identity
+Taken from the company's commercial profile (Oct 2026): JWC logo, brand green `#007E5A` (`--green`) and navy `#102F42` (`--navy`), bold sans-serif headlines (IBM Plex Sans, self-hosted), tagline *Cuidamos dos espaços. Valorizamos o património.* / *We care for spaces. We add value to property.*
+- Logos: `frontend/src/assets/brand/logo.png` (light backgrounds) and `logo-light.png` (navy backgrounds), favicons in `frontend/public/`. The source logo is a raster image (2172 px wide); replace with an SVG if the company has one.
+- Service names follow the profile: Facility Management, Property Management, Waste Management, Produtos e Fornecimentos / Products & Supplies, each with its deliverables.
+- Company identification (legal name, NIF, address, licence note) comes from the profile (`frontend/src/lib/company.ts`); email and phone stay empty until configured.
+- Portuguese uses the company's own orthography (pre-1990: *correctiva*, *activos*, *Projecto*).
+- The hero photograph is the illustrative image supplied in the profile and is captioned as such.
+
 ## Languages
 The site is bilingual: **English** and **European Portuguese**. A visible `EN | PT` switch is in the header (and the mobile menu). On the first visit the browser language is used (Portuguese if it starts with `pt`, otherwise English); the choice is remembered in `localStorage` and `<html lang>` follows it. URLs are the same in both languages. The contact form sends the active language, which is stored with each request.
 

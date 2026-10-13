@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import logo from '../assets/brand/logo.png';
 import { useI18n } from '../i18n/I18nProvider';
 
 export default function Header() {
@@ -37,11 +38,7 @@ export default function Header() {
     <header className="site-header">
       <div className="wrap site-header__bar">
         <Link to="/" className="brand" aria-label={`${c.site.name} — ${c.nav.home}`}>
-          <span className="brand__mark" aria-hidden="true" />
-          <span className="brand__text">
-            <span className="brand__name">{c.site.name}</span>
-            <span className="brand__sub">{c.site.descriptor}</span>
-          </span>
+          <img className="brand__logo" src={logo} alt="" width="900" height="164" />
         </Link>
 
         <button

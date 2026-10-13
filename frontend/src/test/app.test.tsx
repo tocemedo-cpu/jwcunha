@@ -21,12 +21,12 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('routing', () => {
   it.each([
-    ['/', /support services that keep/i],
+    ['/', /We care for spaces/i],
     ['/about', /practical partner/i],
     ['/services/facility-management', /Facility Management/],
     ['/services/property-management', /Property Management/],
     ['/services/waste-management', /Waste Management/],
-    ['/services/supplies-procurement', /Supplies & Procurement/],
+    ['/services/supplies-procurement', /Products & Supplies/],
     ['/sectors', /environments where continuity/i],
     ['/hse-quality', /planned and controlled/i],
     ['/mobilisation', /defined path/i],

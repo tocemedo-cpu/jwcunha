@@ -11,7 +11,6 @@ export default function Contact() {
   const [params] = useSearchParams();
   const requested = params.get('service') ?? '';
   const initial = requested in ct.form.services ? requested : '';
-  const hasDetails = company.email || company.phone || company.address;
   return (
     <>
       <Seo title={ct.title} />
@@ -24,16 +23,17 @@ export default function Contact() {
           </div>
           <aside aria-labelledby="details-h" className="contact-aside">
             <h2 id="details-h" className="h-sm">{ct.detailsTitle}</h2>
-            <p className="strong">{c.site.name}</p>
-            {hasDetails ? (
-              <dl className="details">
-                {company.email && (<><dt>{ct.email}</dt><dd><a href={`mailto:${company.email}`}>{company.email}</a></dd></>)}
-                {company.phone && (<><dt>{ct.phone}</dt><dd><a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a></dd></>)}
-                {company.address && (<><dt>{ct.address}</dt><dd>{company.address}</dd></>)}
-              </dl>
-            ) : (
-              <p>{ct.detailsMissing}</p>
-            )}
+            <p className="strong">{company.legalName}</p>
+            <dl className="details">
+              <dt>{ct.address}</dt>
+              <dd>{company.address}</dd>
+              {company.email && (<><dt>{ct.email}</dt><dd><a href={`mailto:${company.email}`}>{company.email}</a></dd></>)}
+              {company.phone && (<><dt>{ct.phone}</dt><dd><a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a></dd></>)}
+              <dt>NIF</dt>
+              <dd>{company.taxId}</dd>
+            </dl>
+            {!company.email && !company.phone && <p>{ct.detailsMissing}</p>}
+            <p className="legal-note">{c.footer.scopeNote}</p>
           </aside>
         </div>
       </section>
