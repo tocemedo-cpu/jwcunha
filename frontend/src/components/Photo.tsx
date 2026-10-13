@@ -6,6 +6,7 @@ type Props = {
   ratio?: '16/9' | '4/3' | '3/2' | '4/5';
   className?: string;
   priority?: boolean;
+  caption?: string;
 };
 
 const files = import.meta.glob('../assets/photos/*.{jpg,jpeg,webp,png,avif}', {
@@ -23,7 +24,7 @@ function find(name: string): string | undefined {
  * Editorial photograph. Real photography is dropped into src/assets/photos/<name>.jpg (see the README for the
  * shot list). Until then a neutral tonal plate keeps the layout intact; in development it also shows the brief.
  */
-export default function Photo({ name, brief, ratio = '3/2', className = '', priority = false }: Props) {
+export default function Photo({ name, brief, ratio = '3/2', className = '', priority = false, caption }: Props) {
   const { c } = useI18n();
   const alt = c.photoAlt[name] ?? '';
   const src = find(name);
@@ -32,6 +33,7 @@ export default function Photo({ name, brief, ratio = '3/2', className = '', prio
     return (
       <figure className={`photo ${className}`} style={style}>
         <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'} decoding="async" />
+        {caption && <figcaption>{caption}</figcaption>}
       </figure>
     );
   }

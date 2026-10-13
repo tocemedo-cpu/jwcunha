@@ -56,7 +56,9 @@ describe('language switcher', () => {
   it('uses the saved language on the next visit and translates service pages', () => {
     localStorage.setItem('jwc.locale', 'pt');
     renderApp('/services/waste-management');
-    expect(screen.getByRole('heading', { level: 1, name: 'Gestão de Resíduos' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Waste Management' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Âmbito habitual' })).toBeInTheDocument();
+    expect(screen.getByText(/mapa de resíduos e comprovativos de destino/)).toBeInTheDocument();
   });
 
   it('shows the form validation messages in Portuguese', async () => {

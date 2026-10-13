@@ -19,6 +19,9 @@ export default function ServicePage({ service }: { service: ServiceContent }) {
         <div className="wrap split">
           <div className="prose">
             {service.intro.map((p) => <p key={p}>{p}</p>)}
+            <p className="deliverables">
+              <strong>{c.services.deliverablesLabel}</strong> {service.deliverables}
+            </p>
           </div>
           <Photo name={service.photo} brief={service.photoBrief} ratio="3/2" />
         </div>

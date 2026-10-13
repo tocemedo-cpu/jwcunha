@@ -22,7 +22,7 @@ export default function Home() {
               <Link to="/mobilisation" className="link-light">{h.secondaryCta} →</Link>
             </div>
           </div>
-          <Photo name="home-hero" brief={h.photoBrief} ratio="4/5" className="hero__photo" priority />
+          <Photo name="home-hero" brief={h.photoBrief} ratio="4/5" className="hero__photo" priority caption={h.photoCaption} />
         </div>
       </section>
 
