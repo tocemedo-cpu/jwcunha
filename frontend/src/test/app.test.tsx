@@ -56,7 +56,15 @@ describe('company contact details', () => {
     const links = screen.getAllByRole('link', { name: 'jw@cunha.ao' });
     expect(links.length).toBeGreaterThanOrEqual(2);
     links.forEach((a) => expect(a).toHaveAttribute('href', 'mailto:jw@cunha.ao'));
-    expect(screen.queryByText(/contactos diretos|direct contact details/i)).not.toBeInTheDocument();
+  });
+
+  it('publishes no telephone number anywhere on the site', () => {
+    for (const path of ['/', '/contact', '/about']) {
+      const { container, unmount } = renderAt(path);
+      expect(container.querySelector('a[href^="tel:"]')).toBeNull();
+      expect(screen.queryByText(/^(phone|telefone)$/i)).not.toBeInTheDocument(); // no "Phone" row in company details
+      unmount();
+    }
   });
 });
 

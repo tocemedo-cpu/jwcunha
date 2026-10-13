@@ -28,11 +28,9 @@ export default function Contact() {
               <dt>{ct.address}</dt>
               <dd>{company.address}</dd>
               {company.email && (<><dt>{ct.email}</dt><dd><a href={`mailto:${company.email}`}>{company.email}</a></dd></>)}
-              {company.phone && (<><dt>{ct.phone}</dt><dd><a href={`tel:${company.phone.replace(/[^+\d]/g, '')}`}>{company.phone}</a></dd></>)}
               <dt>NIF</dt>
               <dd>{company.taxId}</dd>
             </dl>
-            {!company.email && !company.phone && <p>{ct.detailsMissing}</p>}
             <p className="legal-note">{c.footer.scopeNote}</p>
           </aside>
         </div>
