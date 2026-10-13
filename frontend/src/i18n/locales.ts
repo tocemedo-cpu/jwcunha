@@ -6,8 +6,8 @@ export type LocaleCode = 'en' | 'pt';
 
 export const locales: { code: LocaleCode; label: string; enabled: boolean; content: DeepPartial<Content> }[] = [
   { code: 'en', label: 'English', enabled: true, content: en },
-  // Set enabled: true once content/pt.ts is translated.
-  { code: 'pt', label: 'Português', enabled: false, content: pt },
+  // Portuguese is complete; set enabled: false to hide it.
+  { code: 'pt', label: 'Português', enabled: true, content: pt },
 ];
 
 export const defaultLocale: LocaleCode = 'en';

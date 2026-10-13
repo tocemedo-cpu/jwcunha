@@ -13,7 +13,7 @@ export default function Hse() {
       <PageHeader kicker={h.kicker} title={h.headline} lead={h.intro} />
       <section className="section section--tight">
         <div className="wrap">
-          <Photo name="hse" alt="Worker in PPE at a controlled work location" brief={h.photoBrief} ratio="16/9" />
+          <Photo name="hse" brief={h.photoBrief} ratio="16/9" />
         </div>
       </section>
       <section className="section" aria-labelledby="pillars-h">

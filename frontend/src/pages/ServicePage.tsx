@@ -20,7 +20,7 @@ export default function ServicePage({ service }: { service: ServiceContent }) {
           <div className="prose">
             {service.intro.map((p) => <p key={p}>{p}</p>)}
           </div>
-          <Photo name={service.photo} alt={`${service.title} on an industrial site`} brief={service.photoBrief} ratio="3/2" />
+          <Photo name={service.photo} brief={service.photoBrief} ratio="3/2" />
         </div>
       </section>
       <section className="section section--grey" aria-labelledby="scope-h">

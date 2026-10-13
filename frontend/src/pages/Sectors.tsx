@@ -13,7 +13,7 @@ export default function Sectors() {
       <PageHeader kicker={s.kicker} title={s.headline} lead={s.intro} />
       <section className="section section--tight">
         <div className="wrap">
-          <Photo name="sectors" alt="Industrial facility with tanks and pipework" brief={s.photoBrief} ratio="16/9" />
+          <Photo name="sectors" brief={s.photoBrief} ratio="16/9" />
         </div>
       </section>
       <section className="section" aria-label={s.title}>

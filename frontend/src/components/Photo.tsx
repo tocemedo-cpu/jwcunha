@@ -1,6 +1,7 @@
+import { useI18n } from '../i18n/I18nProvider';
+
 type Props = {
   name: string;
-  alt: string;
   brief: string;
   ratio?: '16/9' | '4/3' | '3/2' | '4/5';
   className?: string;
@@ -22,7 +23,9 @@ function find(name: string): string | undefined {
  * Editorial photograph. Real photography is dropped into src/assets/photos/<name>.jpg (see the README for the
  * shot list). Until then a neutral tonal plate keeps the layout intact; in development it also shows the brief.
  */
-export default function Photo({ name, alt, brief, ratio = '3/2', className = '', priority = false }: Props) {
+export default function Photo({ name, brief, ratio = '3/2', className = '', priority = false }: Props) {
+  const { c } = useI18n();
+  const alt = c.photoAlt[name] ?? '';
   const src = find(name);
   const style = { aspectRatio: ratio };
   if (src) {

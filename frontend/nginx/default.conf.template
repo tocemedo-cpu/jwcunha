@@ -2,6 +2,12 @@
 # Served inside the frontend container. Static SPA + reverse proxy to the Spring Boot API.
 # TLS is expected to be terminated by an upstream load balancer / reverse proxy (see README).
 
+# Preserve the original scheme when TLS is terminated upstream (Render, a load balancer, Caddy...).
+map $http_x_forwarded_proto $fwd_proto {
+    default $http_x_forwarded_proto;
+    ""      $scheme;
+}
+
 server {
     listen ${PORT};
     server_name _;
@@ -25,10 +31,13 @@ server {
 
     location /api/ {
         proxy_pass http://${BACKEND_ADDR};
-        proxy_set_header Host $host;
+        proxy_set_header Host $http_host;   # keeps the port, so the browser's Origin matches (same-origin, no CORS)
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Proto $fwd_proto;
+        # The API is only used same-origin through this proxy. Dropping Origin stops Spring from treating the
+        # browser's own requests as cross-origin (host/port/scheme differ behind proxies and TLS terminators).
+        proxy_set_header Origin "";
         proxy_read_timeout 30s;
     }
 
