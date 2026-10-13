@@ -13,6 +13,7 @@ export const pt: DeepPartial<Content> = {
     short: 'J&W Cunha',
     descriptor: 'Gestão integrada de espaços',
     skip: 'Saltar para o conteúdo',
+    illustrative: 'Imagem ilustrativa',
     metaDescription:
       'Jelson & Wilson Cunha — gestão de instalações, gestão de propriedades, gestão de resíduos e produtos e fornecimentos para operadores de petróleo e gás, empreiteiros, bases logísticas e projectos industriais.',
   },
@@ -33,7 +34,7 @@ export const pt: DeepPartial<Content> = {
   photoAlt: {
     'home-hero': 'Dois técnicos de capacete e farda a consultar um tablet junto a um edifício moderno',
     about: 'Equipa da empresa a analisar plantas no local',
-    'facility-management': 'Gestão de instalações num local industrial',
+    'facility-management': 'Técnico com um tablet a inspeccionar equipamento e tubagens pintadas de verde numa casa das máquinas',
     'property-management': 'Gestão de propriedades num local industrial',
     'waste-management': 'Gestão de resíduos num local industrial',
     'supplies-procurement': 'Produtos e fornecimentos num local industrial',
@@ -47,7 +48,6 @@ export const pt: DeepPartial<Content> = {
     headline: 'Cuidamos dos espaços. Valorizamos o património.',
     lead:
       'A Jelson & Wilson Cunha presta serviços de gestão de instalações, gestão de propriedades, gestão de resíduos e produtos e fornecimentos a operadores de petróleo e gás, empreiteiros, bases logísticas e projectos industriais, bem como a edifícios comerciais, condomínios, hotelaria e instituições.',
-    photoCaption: 'Imagem ilustrativa',
     primaryCta: 'Pedir proposta',
     secondaryCta: 'Ver como mobilizamos',
     photoBrief: 'Vista ampla de uma base ou parque industrial ao nascer do dia, com equipamento e edifícios à vista.',
