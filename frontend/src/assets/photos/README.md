@@ -9,13 +9,13 @@ If an image shows people who are not real staff, keep the `alt` text neutral (se
 |---|---|---|---|
 | `home-hero` | Home | portrait 4:5 (cropped from landscape) | done |
 | `facility-management` | Facility Management | 3:2 | done |
-| `about` | About | 3:2 | to do |
-| `property-management` | Property Management | 3:2 | to do |
+| `about` | About | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
+| `property-management` | Property Management | 3:2 | done (low resolution, ~490 px source: replace with a larger original) |
 | `waste-management` | Waste Management | 3:2 | to do |
 | `supplies-procurement` | Products & Supplies | 3:2 | to do |
-| `sectors` | Sectors | 16:9 | to do |
-| `hse` | HSE & Quality | 16:9 | to do |
-| `mobilisation` | Mobilisation | 16:9 | to do |
+| `sectors` | Sectors | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
+| `hse` | HSE & Quality | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
+| `mobilisation` | Mobilisation | 16:9 | done (low resolution, ~490 px source: replace with a larger original) |
 
 ## Prompts (same look as the supplied images)
 Common style: *photorealistic documentary photograph, natural daylight, sharp, no text, no logos, no watermarks;
