@@ -20,8 +20,9 @@ services:
     runtime: docker
     region: frankfurt
     plan: starter
-    rootDir: backend
-    dockerfilePath: ./Dockerfile
+    # Render resolves these from the repository root (not from rootDir).
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     autoDeploy: true
     envVars:
       - key: PORT
@@ -53,8 +54,8 @@ services:
     runtime: docker
     region: frankfurt
     plan: starter
-    rootDir: frontend
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
     healthCheckPath: /
     autoDeploy: true
     envVars:
