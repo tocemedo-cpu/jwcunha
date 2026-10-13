@@ -16,7 +16,7 @@ export default function About() {
           <div className="prose">
             {a.intro.map((p) => <p key={p}>{p}</p>)}
           </div>
-          <Photo name="about" alt="Company team reviewing plans on site" brief={a.photoBrief} ratio="3/2" />
+          <Photo name="about" brief={a.photoBrief} ratio="3/2" />
         </div>
       </section>
       <section className="section section--grey" aria-labelledby="principles-h">

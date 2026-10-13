@@ -13,7 +13,7 @@ export default function Mobilisation() {
       <PageHeader kicker={m.kicker} title={m.headline} lead={m.intro} />
       <section className="section section--tight">
         <div className="wrap">
-          <Photo name="mobilisation" alt="Vehicles and crew arriving at a site gate" brief={m.photoBrief} ratio="16/9" />
+          <Photo name="mobilisation" brief={m.photoBrief} ratio="16/9" />
         </div>
       </section>
       <section className="section" aria-labelledby="steps-h">

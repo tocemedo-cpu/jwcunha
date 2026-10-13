@@ -29,6 +29,8 @@ export const en = {
     short: 'J&W Cunha',
     descriptor: 'Industrial support services',
     skip: 'Skip to content',
+    metaDescription:
+      'Jelson & Wilson Cunha — facility management, property management, waste management and supplies & procurement for oil & gas operators, contractors, logistics bases and industrial projects.',
   },
   nav: {
     home: 'Home',
@@ -44,6 +46,17 @@ export const en = {
     primary: 'Primary navigation',
     language: 'Language',
   },
+  photoAlt: {
+    'home-hero': 'Industrial support base at first light',
+    about: 'Company team reviewing plans on site',
+    'facility-management': 'Facility management on an industrial site',
+    'property-management': 'Property management on an industrial site',
+    'waste-management': 'Waste management on an industrial site',
+    'supplies-procurement': 'Supplies and procurement on an industrial site',
+    sectors: 'Industrial facility with tanks and pipework',
+    hse: 'Worker in PPE at a controlled work location',
+    mobilisation: 'Vehicles and crew arriving at a site gate',
+  } as Record<string, string>,
   home: {
     title: 'Support services for oil & gas operations',
     kicker: 'Oil & Gas · Industrial support',

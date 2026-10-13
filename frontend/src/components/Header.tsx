@@ -82,14 +82,21 @@ export default function Header() {
             </ul>
           </nav>
           {available.length > 1 && (
-            <label className="lang">
-              <span className="sr-only">{c.nav.language}</span>
-              <select value={locale} onChange={(e) => setLocale(e.target.value as typeof locale)}>
-                {available.map((l) => (
-                  <option key={l.code} value={l.code}>{l.label}</option>
-                ))}
-              </select>
-            </label>
+            <div className="lang" role="group" aria-label={c.nav.language}>
+              {available.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  lang={l.code}
+                  className={l.code === locale ? 'is-active' : undefined}
+                  aria-pressed={l.code === locale}
+                  aria-label={l.label}
+                  onClick={() => setLocale(l.code)}
+                >
+                  {l.code.toUpperCase()}
+                </button>
+              ))}
+            </div>
           )}
           <Link to="/contact" className="btn btn--primary btn--sm">{c.nav.cta}</Link>
         </div>

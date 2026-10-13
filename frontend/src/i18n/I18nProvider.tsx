@@ -14,6 +14,11 @@ function initial(): LocaleCode {
   } catch {
     /* storage unavailable */
   }
+  const preferred = (typeof navigator !== 'undefined' ? navigator.languages ?? [navigator.language] : []).map((l) => l.slice(0, 2).toLowerCase());
+  for (const l of preferred) {
+    const match = locales.find((x) => x.code === l && x.enabled);
+    if (match) return match.code;
+  }
   return defaultLocale;
 }
 

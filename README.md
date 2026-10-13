@@ -83,8 +83,12 @@ cd frontend && npm test && npm run build
 ## Photography
 See `frontend/src/assets/photos/README.md` for the shot list. Without photos a neutral placeholder is shown.
 
-## Adding Portuguese
-Fill `frontend/src/content/pt.ts` (same shape as `en.ts`; missing keys fall back to English), then set `enabled: true` for `pt` in `frontend/src/i18n/locales.ts`. A language selector appears automatically. The form already submits the active language.
+## Languages
+The site is bilingual: **English** and **European Portuguese**. A visible `EN | PT` switch is in the header (and the mobile menu). On the first visit the browser language is used (Portuguese if it starts with `pt`, otherwise English); the choice is remembered in `localStorage` and `<html lang>` follows it. URLs are the same in both languages. The contact form sends the active language, which is stored with each request.
+
+- Copy lives in `frontend/src/content/en.ts` (source of truth) and `frontend/src/content/pt.ts`. Components never contain hard-coded text, including photo `alt` text.
+- A test (`src/test/i18n.test.tsx`) fails if any English string has no Portuguese counterpart, so nothing silently falls back.
+- Add another language: create `content/xx.ts`, register it in `i18n/locales.ts` (`enabled: true`) and extend the `LocaleCode` type and the backend `language` pattern (`ProposalRequestDto`).
 
 ## Deploy on Render
 `render.yaml` defines the whole stack: managed PostgreSQL 16 (`jwc-db`), a **private** Spring Boot service (`jwc-backend`) and the public Nginx + React service (`jwc-web`) that proxies `/api` to it. Render terminates TLS and provides the certificate.
