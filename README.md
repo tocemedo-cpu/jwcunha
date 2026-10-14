@@ -83,6 +83,17 @@ cd frontend && npm test && npm run build
 ## Photography
 See `frontend/src/assets/photos/README.md` for the shot list. Without photos a neutral placeholder is shown.
 
+## Proposal requests: storage and e-mail alerts
+1. The form posts to `POST /api/contact`; the server validates it and saves it in PostgreSQL (table `proposal_request`). Only after the row is committed does the visitor see "Request received" and a reference code.
+2. **E-mail alert (optional).** When `MAIL_ENABLED=true` and `MAIL_HOST`, `MAIL_FROM` and `MAIL_NOTIFY_TO` are set, each new request triggers a plain-text e-mail (in Portuguese) to the recipients in `MAIL_NOTIFY_TO` (comma-separated). *Reply* answers the visitor directly (Reply-To is the visitor's address).
+   - It is sent **after** the request is saved, in the background: a slow or broken mail server can never delay or lose a request or change what the visitor sees.
+   - If sending fails the request is marked `FAILED` and retried every 5 minutes, up to 5 attempts within 7 days. Each request records `notification_status` (`PENDING`, `SENT`, `FAILED`, `DISABLED`), the attempt count and the send time; the admin API shows `notificationStatus` / `notifiedAt`.
+   - Requests received before alerts were switched on (or while off) are `DISABLED` and are never e-mailed retroactively.
+   - Visitor text is only placed in the body (headers are sanitised), so it cannot inject headers.
+   - Empty or unset mail variables are valid and mean "off" (hosting dashboards send unfilled variables as empty).
+3. SMTP: use the provider's SMTP host with STARTTLS on port 587 (default; set `MAIL_SSL=true` and the provider's SSL port for implicit TLS). Credentials go in the hosting dashboard / `.env`, never in the repository. Check your hosting plan's outbound SMTP policy: some plans block ports 25/465/587; if so use the provider's alternative port (often 2525).
+4. Reading requests: `GET /api/admin/requests` (HTTP Basic, see *Admin account*). There is no admin page or deletion endpoint yet.
+
 ## Brand identity
 Taken from the company's commercial profile (Oct 2026): JWC logo, brand green `#007E5A` (`--green`) and navy `#102F42` (`--navy`), bold sans-serif headlines (IBM Plex Sans, self-hosted), tagline *Cuidamos dos espaços. Valorizamos o património.* / *We care for spaces. We add value to property.*
 - Logos: `frontend/src/assets/brand/logo.png` (light backgrounds) and `logo-light.png` (navy backgrounds), favicons in `frontend/public/`. The source logo is a raster image (2172 px wide); replace with an SVG if the company has one.

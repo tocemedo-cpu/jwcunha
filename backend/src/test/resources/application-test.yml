@@ -8,3 +8,5 @@ spring:
 app:
   rate-limit:
     max-requests: 1000
+  mail:
+    retry-delay-ms: 3600000   # the scheduler must not interfere with tests; they call retryPending() directly
