@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * when no hash is configured the admin API stays locked.
  */
 @ConfigurationProperties(prefix = "app")
-public record AppProperties(Admin admin, List<String> allowedOrigins, RateLimit rateLimit, Mail mail) {
+public record AppProperties(Admin admin, List<String> allowedOrigins, RateLimit rateLimit, Mail mail, AdminThrottle adminThrottle) {
 
     public record Admin(String username, String passwordHash) {
         public boolean configured() {
@@ -19,6 +19,10 @@ public record AppProperties(Admin admin, List<String> allowedOrigins, RateLimit 
     }
 
     public record RateLimit(int maxRequests, int windowSeconds) {
+    }
+
+    /** Blocks an address after too many failed admin logins (HTTP 401) inside the window. */
+    public record AdminThrottle(int maxFailures, int windowSeconds) {
     }
 
     /**
