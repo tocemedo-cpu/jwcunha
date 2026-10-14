@@ -62,6 +62,9 @@ app:
   admin-throttle:
     max-failures: 10
     window-seconds: 900
+  reminder:
+    after-hours: ${REMINDER_AFTER_HOURS:48}   # 0 = off; blank = 48. Needs the mail settings below
+    cron: "0 0 8 * * MON-FRI"                # Africa/Luanda
   mail:
     enabled: ${MAIL_ENABLED:false}
     from: ${MAIL_FROM:}

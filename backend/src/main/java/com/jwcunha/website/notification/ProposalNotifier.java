@@ -91,6 +91,36 @@ public class ProposalNotifier {
         mailSender.send(message);
     }
 
+    /** Sends the digest of requests nobody has picked up yet; throws on failure (the next run simply tries again). */
+    public void sendReminder(List<ProposalRequest> shown, long total, long afterHours) throws Exception {
+        JavaMailSender mailSender = sender.getObject();
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+        helper.setFrom(config.from().trim());
+        helper.setTo(recipients.toArray(String[]::new));
+        helper.setSubject("[Site] " + total + (total == 1 ? " pedido de proposta sem resposta" : " pedidos de proposta sem resposta"));
+        helper.setText(reminderBody(shown, total, afterHours), false);
+        mailSender.send(message);
+    }
+
+    String reminderBody(List<ProposalRequest> shown, long total, long afterHours) {
+        var sb = new StringBuilder();
+        sb.append(total == 1 ? "Há 1 pedido" : "Há " + total + " pedidos")
+                .append(" de proposta no estado \"Novo\" há mais de ").append(afterHours).append(" horas.\n\n");
+        for (ProposalRequest r : shown) {
+            sb.append("- ").append(WHEN.format(r.getCreatedAt())).append("  ")
+                    .append(oneLine(r.getCompany())).append(" (").append(oneLine(r.getFullName())).append(", ")
+                    .append(oneLine(r.getEmail())).append(")  ")
+                    .append(label(r.getServiceArea())).append("\n");
+        }
+        if (total > shown.size()) {
+            sb.append("... e mais ").append(total - shown.size()).append(".\n");
+        }
+        sb.append("\n--\nAbra a página de administração (/admin), responda ao cliente e altere o estado do pedido "
+                + "para \"Em análise\" ou \"Respondido\": quando já não houver pedidos novos pendentes, este lembrete deixa de ser enviado.\n");
+        return sb.toString();
+    }
+
     String subject(ProposalRequest r) {
         return oneLine("[Site] Novo pedido de proposta – " + r.getCompany() + " – " + label(r.getServiceArea()));
     }

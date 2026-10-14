@@ -38,6 +38,7 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD:-}
       MAIL_FROM: ${MAIL_FROM:-}
       MAIL_NOTIFY_TO: ${MAIL_NOTIFY_TO:-}
+      REMINDER_AFTER_HOURS: ${REMINDER_AFTER_HOURS:-48}
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
       interval: 10s

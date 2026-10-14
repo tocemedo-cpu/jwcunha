@@ -19,6 +19,13 @@ public interface ProposalRequestRepository
     @Query("select p.status, count(p) from ProposalRequest p group by p.status")
     List<Object[]> countByStatus();
 
+    /** Requests still in status NEW that arrived before {@code olderThan}, oldest first. */
+    @Query("select p from ProposalRequest p where p.status = :status and p.createdAt < :olderThan order by p.createdAt")
+    List<ProposalRequest> findStaleByStatus(@Param("status") RequestStatus status,
+            @Param("olderThan") Instant olderThan, Pageable pageable);
+
+    long countByStatusAndCreatedAtBefore(RequestStatus status, Instant olderThan);
+
     /** Records one notification attempt. {@code notifiedAt} is set only when the e-mail was sent. */
     @Modifying
     @Transactional
