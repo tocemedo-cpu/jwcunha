@@ -52,6 +52,19 @@ public class ProposalRequest {
     @Column(nullable = false, length = 20)
     private RequestStatus status = RequestStatus.NEW;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "notification_status", nullable = false, length = 16)
+    private NotificationStatus notificationStatus = NotificationStatus.PENDING;
+
+    @Column(name = "notification_attempts", nullable = false)
+    private int notificationAttempts;
+
+    @Column(name = "notified_at")
+    private Instant notifiedAt;
+
+    @Column(name = "notification_error", length = 300)
+    private String notificationError;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -74,6 +87,10 @@ public class ProposalRequest {
         this.language = language;
     }
 
+    public void startNotification(boolean emailEnabled) {
+        this.notificationStatus = emailEnabled ? NotificationStatus.PENDING : NotificationStatus.DISABLED;
+    }
+
     public void changeStatus(RequestStatus newStatus) {
         this.status = newStatus;
         this.updatedAt = Instant.now();
@@ -92,4 +109,8 @@ public class ProposalRequest {
     public RequestStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public NotificationStatus getNotificationStatus() { return notificationStatus; }
+    public int getNotificationAttempts() { return notificationAttempts; }
+    public Instant getNotifiedAt() { return notifiedAt; }
+    public String getNotificationError() { return notificationError; }
 }

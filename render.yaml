@@ -47,6 +47,22 @@ services:
         value: "5"
       - key: RATE_LIMIT_WINDOW_SECONDS
         value: "600"
+      # E-mail notification of new proposal requests. Off until MAIL_ENABLED is "true" and the values below are set
+      # (leaving any of them empty is safe: the site then simply sends no e-mail).
+      - key: MAIL_ENABLED
+        sync: false
+      - key: MAIL_HOST          # SMTP server of the e-mail provider
+        sync: false
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USER
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM          # e.g. noreply@cunha.ao (the domain must be authorised at the provider: SPF/DKIM)
+        sync: false
+      - key: MAIL_NOTIFY_TO     # who receives the alerts, comma-separated, e.g. jw@cunha.ao
+        sync: false
 
   # Public site: Nginx serves the React build and proxies /api to the private backend.
   - type: web

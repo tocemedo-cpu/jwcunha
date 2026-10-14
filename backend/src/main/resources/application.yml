@@ -23,6 +23,24 @@ spring:
     enabled: true
   jackson:
     default-property-inclusion: non_null
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USER:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${MAIL_AUTH:true}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS:true}
+      mail.smtp.ssl.enable: ${MAIL_SSL:false}
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 10000
+      mail.smtp.writetimeout: 10000
+  task:
+    execution:
+      pool:
+        core-size: 2
+        max-size: 4
+        queue-capacity: 100
 
 management:
   endpoints:
@@ -41,3 +59,10 @@ app:
   rate-limit:
     max-requests: ${RATE_LIMIT_MAX:5}
     window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:600}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:}
+    to: ${MAIL_NOTIFY_TO:}
+    max-attempts: 5
+    retry-delay-ms: 300000        # how often failed/pending notifications are retried
+    retry-min-age-seconds: 120    # do not retry a request younger than this (the first attempt is still running)
