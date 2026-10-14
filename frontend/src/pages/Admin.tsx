@@ -5,8 +5,11 @@ import { useI18n } from '../i18n/I18nProvider';
 import {
   AuthError,
   ThrottledError,
+  addNote,
   basicAuth,
+  deleteNote,
   exportCsv,
+  getNotes,
   getRequests,
   getSummary,
   loadAuth,
@@ -14,6 +17,7 @@ import {
   setStatus,
   type AdminRequest,
   type Filters,
+  type Note,
   type RequestPage,
   type RequestStatus,
 } from '../lib/adminApi';
@@ -176,6 +180,11 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
     }
   }
 
+  /** Keeps the "n notes" badge of the list in step with the notes panel. */
+  function noteCountChanged(id: string, delta: number) {
+    setData((d) => d && { ...d, content: d.content.map((x) => (x.id === id ? { ...x, noteCount: Math.max(0, x.noteCount + delta) } : x)) });
+  }
+
   async function download() {
     setExporting(true);
     setNotice('');
@@ -285,7 +294,12 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
                 <RowGroup key={r.id}>
                   <tr className={open ? 'is-open' : undefined}>
                     <td data-label={a.columns.received}>{dateFmt.format(new Date(r.createdAt))}</td>
-                    <td data-label={a.columns.company}><strong>{r.company}</strong></td>
+                    <td data-label={a.columns.company}>
+                      <strong>{r.company}</strong>
+                      {r.noteCount > 0 && (
+                        <span className="admin__badge">{r.noteCount} {r.noteCount === 1 ? a.notes.badgeOne : a.notes.badgeMany}</span>
+                      )}
+                    </td>
                     <td data-label={a.columns.contact}>{r.fullName}<br /><span className="admin__muted">{r.email}</span></td>
                     <td data-label={a.columns.service}>{services[r.serviceArea] ?? r.serviceArea}</td>
                     <td data-label={a.columns.status}>
@@ -319,6 +333,7 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
                           <dt>{a.detail.alert}</dt><dd>{a.alerts[r.notificationStatus]}{r.notifiedAt ? ` · ${dateFmt.format(new Date(r.notifiedAt))}` : ''}</dd>
                           <dt>{a.detail.reference}</dt><dd className="admin__ref">{r.id}</dd>
                         </dl>
+                        <Notes auth={auth} requestId={r.id} onSignOut={onSignOut} onCountChange={(d) => noteCountChanged(r.id, d)} dateFmt={dateFmt} />
                         <a className="btn btn--primary btn--sm" href={`mailto:${r.email}?subject=${encodeURIComponent(`Re: ${c.contact.form.title}`)}`}>
                           {a.detail.reply}
                         </a>
@@ -348,6 +363,108 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
         </nav>
       )}
     </div>
+  );
+}
+
+/** Chronological log of internal notes for one request: who wrote what and when. */
+function Notes({ auth, requestId, onSignOut, onCountChange, dateFmt }: {
+  auth: string;
+  requestId: string;
+  onSignOut: () => void;
+  onCountChange: (delta: number) => void;
+  dateFmt: Intl.DateTimeFormat;
+}) {
+  const { c } = useI18n();
+  const n = c.admin.notes;
+  const [notes, setNotes] = useState<Note[] | null>(null);
+  const [draft, setDraft] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [confirming, setConfirming] = useState<string | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    getNotes(auth, requestId)
+      .then((list) => live && setNotes(list))
+      .catch((err) => {
+        if (err instanceof AuthError) onSignOut();
+        else if (live) setError(n.loadError);
+      });
+    return () => {
+      live = false;
+    };
+  }, [auth, requestId, onSignOut, n.loadError]);
+
+  async function add(e: FormEvent) {
+    e.preventDefault();
+    const body = draft.trim();
+    if (!body) return;
+    setBusy(true);
+    setError('');
+    try {
+      const saved = await addNote(auth, requestId, body);
+      setNotes((list) => [...(list ?? []), saved]);
+      setDraft('');
+      onCountChange(1);
+    } catch (err) {
+      if (err instanceof AuthError) onSignOut();
+      else setError(n.saveError); // never pretend it was saved
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(id: string) {
+    setError('');
+    try {
+      await deleteNote(auth, requestId, id);
+      setNotes((list) => (list ?? []).filter((x) => x.id !== id));
+      setConfirming(null);
+      onCountChange(-1);
+    } catch (err) {
+      if (err instanceof AuthError) onSignOut();
+      else setError(n.deleteError);
+    }
+  }
+
+  return (
+    <section className="admin__notes" aria-label={n.title}>
+      <h3>{n.title}</h3>
+      <p className="admin__muted">{n.hint}</p>
+      {error && <p className="form-banner" role="alert">{error}</p>}
+      {notes && notes.length === 0 && <p className="admin__muted">{n.empty}</p>}
+      {notes && notes.length > 0 && (
+        <ul className="admin__notelist">
+          {notes.map((note) => (
+            <li key={note.id}>
+              <p className="admin__notemeta">
+                {dateFmt.format(new Date(note.createdAt))} · {n.by} {note.author}
+              </p>
+              <p className="admin__notebody">{note.body}</p>
+              {confirming === note.id ? (
+                <span className="admin__confirm">
+                  <button type="button" className="text-link" onClick={() => remove(note.id)}>{n.confirmDelete}</button>
+                  <button type="button" className="text-link" onClick={() => setConfirming(null)}>{n.cancel}</button>
+                </span>
+              ) : (
+                <button type="button" className="text-link" onClick={() => setConfirming(note.id)}>
+                  {n.delete}<span className="sr-only"> {note.author} {dateFmt.format(new Date(note.createdAt))}</span>
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      <form onSubmit={add} className="admin__noteform">
+        <div className="field">
+          <label htmlFor={`note-${requestId}`}>{n.label}</label>
+          <textarea id={`note-${requestId}`} rows={3} maxLength={2000} value={draft} placeholder={n.placeholder} onChange={(e) => setDraft(e.target.value)} />
+        </div>
+        <button type="submit" className="btn btn--primary btn--sm" disabled={busy || !draft.trim()}>
+          {busy ? n.adding : n.add}
+        </button>
+      </form>
+    </section>
   );
 }
 

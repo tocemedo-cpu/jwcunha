@@ -25,9 +25,11 @@ public class ProposalService {
     private final ProposalRequestRepository repository;
     private final ApplicationEventPublisher events;
     private final ProposalNotifier notifier;
+    private final RequestNoteRepository notes;
 
     public ProposalService(ProposalRequestRepository repository, ApplicationEventPublisher events,
-            ProposalNotifier notifier) {
+            ProposalNotifier notifier, RequestNoteRepository notes) {
+        this.notes = notes;
         this.repository = repository;
         this.events = events;
         this.notifier = notifier;
@@ -54,7 +56,15 @@ public class ProposalService {
 
     @Transactional(readOnly = true)
     public Page<ProposalRequestView> list(RequestFilter filter, Pageable pageable) {
-        return repository.findAll(filter.toSpecification(), pageable).map(ProposalRequestView::from);
+        Page<ProposalRequest> page = repository.findAll(filter.toSpecification(), pageable);
+        Map<UUID, Long> counts = new java.util.HashMap<>();
+        var ids = page.getContent().stream().map(ProposalRequest::getId).toList();
+        if (!ids.isEmpty()) {
+            for (Object[] row : notes.countByRequestIds(ids)) {
+                counts.put((UUID) row[0], (Long) row[1]);
+            }
+        }
+        return page.map(r -> ProposalRequestView.from(r, counts.getOrDefault(r.getId(), 0L)));
     }
 
     /** Number of requests per status (every status present, zero when none). */
@@ -77,16 +87,27 @@ public class ProposalService {
                 PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"))).getContent();
     }
 
+    /** Internal notes of the given requests, oldest first, for the CSV export. */
+    @Transactional(readOnly = true)
+    public Map<UUID, List<RequestNote>> notesFor(List<ProposalRequest> rows) {
+        Map<UUID, List<RequestNote>> out = new java.util.HashMap<>();
+        if (!rows.isEmpty()) {
+            notes.findByRequestIdInOrderByCreatedAtAsc(rows.stream().map(ProposalRequest::getId).toList())
+                    .forEach(n -> out.computeIfAbsent(n.getRequestId(), k -> new java.util.ArrayList<>()).add(n));
+        }
+        return out;
+    }
+
     @Transactional(readOnly = true)
     public ProposalRequestView get(UUID id) {
-        return ProposalRequestView.from(find(id));
+        return ProposalRequestView.from(find(id), notes.countByRequestId(id));
     }
 
     @Transactional
     public ProposalRequestView updateStatus(UUID id, RequestStatus status) {
         var entity = find(id);
         entity.changeStatus(status);
-        return ProposalRequestView.from(repository.saveAndFlush(entity));
+        return ProposalRequestView.from(repository.saveAndFlush(entity), notes.countByRequestId(id));
     }
 
     private ProposalRequest find(UUID id) {

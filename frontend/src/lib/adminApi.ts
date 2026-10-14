@@ -14,9 +14,12 @@ export type AdminRequest = {
   status: RequestStatus;
   notificationStatus: NotificationStatus;
   notifiedAt?: string;
+  noteCount: number;
   createdAt: string;
   updatedAt: string;
 };
+
+export type Note = { id: string; author: string; body: string; createdAt: string };
 
 export type RequestPage = {
   content: AdminRequest[];
@@ -102,4 +105,21 @@ export async function setStatus(auth: string, id: string, status: RequestStatus)
 
 export async function exportCsv(auth: string, f: Filters): Promise<Blob> {
   return (await call(auth, `/export.csv${query(f)}`, { headers: { Accept: 'text/csv' } })).blob();
+}
+
+export async function getNotes(auth: string, requestId: string): Promise<Note[]> {
+  return (await call(auth, `/${requestId}/notes`)).json();
+}
+
+export async function addNote(auth: string, requestId: string, body: string): Promise<Note> {
+  const res = await call(auth, `/${requestId}/notes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body }),
+  });
+  return res.json();
+}
+
+export async function deleteNote(auth: string, requestId: string, noteId: string): Promise<void> {
+  await call(auth, `/${requestId}/notes/${noteId}`, { method: 'DELETE' });
 }
