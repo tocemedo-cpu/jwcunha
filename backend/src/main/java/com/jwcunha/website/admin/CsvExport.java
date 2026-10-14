@@ -4,8 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.jwcunha.website.contact.ProposalRequest;
+import com.jwcunha.website.contact.RequestNote;
 
 /**
  * CSV for spreadsheets. Semicolon-separated with a UTF-8 BOM, which is what Excel expects in Portuguese locales
@@ -17,20 +20,28 @@ final class CsvExport {
     private static final DateTimeFormatter WHEN =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("Africa/Luanda"));
     private static final String[] HEADER = {"Referência", "Recebido em (Luanda)", "Estado", "Nome", "Empresa", "Email",
-            "Telefone", "Serviço", "Local do projecto", "Idioma", "Mensagem", "Aviso por email"};
+            "Telefone", "Serviço", "Local do projecto", "Idioma", "Mensagem", "Aviso por email", "Notas internas"};
 
     private CsvExport() {
     }
 
-    static byte[] write(List<ProposalRequest> rows) {
+    static byte[] write(List<ProposalRequest> rows, Map<UUID, List<RequestNote>> notes) {
         StringBuilder out = new StringBuilder("\uFEFF");
         line(out, HEADER);
         for (ProposalRequest r : rows) {
             line(out, r.getId().toString(), WHEN.format(r.getCreatedAt()), r.getStatus().name(), r.getFullName(),
                     r.getCompany(), r.getEmail(), r.getPhone(), r.getServiceArea().name(), r.getProjectLocation(),
-                    r.getLanguage(), r.getMessage(), r.getNotificationStatus().name());
+                    r.getLanguage(), r.getMessage(), r.getNotificationStatus().name(),
+                    joinNotes(notes.getOrDefault(r.getId(), List.of())));
         }
         return out.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    /** One line per note: "date author: text", separated by " | ". */
+    private static String joinNotes(List<RequestNote> notes) {
+        return String.join(" | ", notes.stream()
+                .map(n -> WHEN.format(n.getCreatedAt()) + " " + n.getAuthor() + ": " + n.getBody().replaceAll("\\s+", " "))
+                .toList());
     }
 
     private static void line(StringBuilder out, String... cells) {

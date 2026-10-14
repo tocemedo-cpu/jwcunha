@@ -18,6 +18,7 @@ const row = (over: Record<string, unknown> = {}) => ({
   language: 'pt',
   status: 'NEW',
   notificationStatus: 'SENT',
+  noteCount: 0,
   notifiedAt: '2026-10-14T08:00:00Z',
   createdAt: '2026-10-14T07:59:00Z',
   updatedAt: '2026-10-14T07:59:00Z',
@@ -95,6 +96,7 @@ describe('admin page', () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
       const u = String(url);
       if (u.includes('/summary')) return json(summary);
+      if (u.includes('/notes')) return json([]);
       if (u.includes('/status')) return json(row({ status: 'RESPONDED' }));
       return json(page([row()]));
     });
@@ -178,5 +180,105 @@ describe('admin page', () => {
     await u.click(screen.getByRole('button', { name: /terminar sessão/i }));
     expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
     expect(sessionStorage.getItem('jwc.admin')).toBeNull();
+  });
+
+  describe('internal notes', () => {
+    const note = (over: Record<string, unknown> = {}) => ({
+      id: 'aaaaaaaa-0000-0000-0000-000000000001',
+      author: 'admin',
+      body: 'Liguei ao cliente; pediu visita.',
+      createdAt: '2026-10-14T09:30:00Z',
+      ...over,
+    });
+
+    function setup(opts: { notes?: unknown[]; failPost?: boolean; failDelete?: boolean; noteCount?: number } = {}) {
+      sessionStorage.setItem('jwc.admin', basicAuth('admin', 'secret-password-1'));
+      const calls: { method: string; url: string; body?: unknown }[] = [];
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, init) => {
+        const u = String(url);
+        const method = (init as RequestInit | undefined)?.method ?? 'GET';
+        if (u.includes('/notes')) {
+          calls.push({ method, url: u, body: (init as RequestInit | undefined)?.body ? JSON.parse((init as RequestInit).body as string) : undefined });
+          if (method === 'POST') return opts.failPost ? new Response('{}', { status: 500 }) : json(note({ id: 'bbbbbbbb-0000-0000-0000-000000000002', body: calls[calls.length - 1].body && (calls[calls.length - 1].body as { body: string }).body }), 201);
+          if (method === 'DELETE') return opts.failDelete ? new Response('{}', { status: 500 }) : new Response(null, { status: 204 });
+          return json(opts.notes ?? []);
+        }
+        if (u.includes('/summary')) return json(summary);
+        return json(page([row({ noteCount: opts.noteCount ?? (opts.notes?.length ?? 0) })]));
+      });
+      return calls;
+    }
+
+    async function openRow() {
+      renderAdmin();
+      const u = userEvent.setup();
+      await screen.findByText('Alfa Energia', { selector: 'strong' });
+      await u.click(screen.getByRole('button', { name: /abrir alfa energia/i }));
+      return u;
+    }
+
+    it('shows the existing notes with author and date, and a badge in the list', async () => {
+      setup({ notes: [note()] });
+      renderAdmin();
+      expect(await screen.findByText('1 nota')).toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: /abrir alfa energia/i }));
+      const section = await screen.findByRole('region', { name: /notas internas/i });
+      expect(within(section).getByText('Liguei ao cliente; pediu visita.')).toBeInTheDocument();
+      expect(within(section).getByText(/por admin/)).toBeInTheDocument();
+    });
+
+    it('adds a trimmed note, shows it, clears the box and updates the badge', async () => {
+      const calls = setup();
+      const u = await openRow();
+      const section = await screen.findByRole('region', { name: /notas internas/i });
+      const add = within(section).getByRole('button', { name: /adicionar nota/i });
+      expect(add).toBeDisabled(); // nothing typed yet
+      await u.type(within(section).getByLabelText(/nova nota/i), '  Enviada proposta por email  ');
+      await u.click(add);
+
+      expect(await within(section).findByText('Enviada proposta por email')).toBeInTheDocument();
+      expect(calls.find((x) => x.method === 'POST')?.body).toEqual({ body: 'Enviada proposta por email' });
+      expect(within(section).getByLabelText(/nova nota/i)).toHaveValue('');
+      expect(screen.getByText('1 nota')).toBeInTheDocument();
+    });
+
+    it('never shows a note as saved when the server refuses it', async () => {
+      setup({ failPost: true });
+      const u = await openRow();
+      const section = await screen.findByRole('region', { name: /notas internas/i });
+      await u.type(within(section).getByLabelText(/nova nota/i), 'Esta nota não vai ser guardada');
+      await u.click(within(section).getByRole('button', { name: /adicionar nota/i }));
+      expect(await within(section).findByRole('alert')).toHaveTextContent(/nada foi guardado/i);
+      expect(within(section).queryByText('Esta nota não vai ser guardada', { selector: 'p' })).not.toBeInTheDocument();
+      expect(within(section).getByLabelText(/nova nota/i)).toHaveValue('Esta nota não vai ser guardada'); // kept for retry
+      expect(screen.queryByText('1 nota')).not.toBeInTheDocument();
+    });
+
+    it('deletes only after a second confirmation click', async () => {
+      const calls = setup({ notes: [note()] });
+      const u = await openRow();
+      const section = await screen.findByRole('region', { name: /notas internas/i });
+      await u.click(await within(section).findByRole('button', { name: /^apagar/i }));
+      expect(calls.some((x) => x.method === 'DELETE')).toBe(false); // not yet
+
+      await u.click(within(section).getByRole('button', { name: /cancelar/i }));
+      expect(within(section).getByText('Liguei ao cliente; pediu visita.')).toBeInTheDocument();
+
+      await u.click(within(section).getByRole('button', { name: /^apagar/i }));
+      await u.click(within(section).getByRole('button', { name: /confirmar eliminação/i }));
+      await waitFor(() => expect(within(section).queryByText('Liguei ao cliente; pediu visita.')).not.toBeInTheDocument());
+      expect(calls.find((x) => x.method === 'DELETE')?.url).toContain('/notes/aaaaaaaa-0000-0000-0000-000000000001');
+      expect(screen.queryByText('1 nota')).not.toBeInTheDocument();
+    });
+
+    it('keeps the note when deleting fails', async () => {
+      setup({ notes: [note()], failDelete: true });
+      const u = await openRow();
+      const section = await screen.findByRole('region', { name: /notas internas/i });
+      await u.click(await within(section).findByRole('button', { name: /^apagar/i }));
+      await u.click(within(section).getByRole('button', { name: /confirmar eliminação/i }));
+      expect(await within(section).findByRole('alert')).toHaveTextContent(/nada foi alterado/i);
+      expect(within(section).getByText('Liguei ao cliente; pediu visita.')).toBeInTheDocument();
+    });
   });
 });

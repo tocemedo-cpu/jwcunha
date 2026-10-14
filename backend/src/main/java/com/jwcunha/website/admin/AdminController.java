@@ -56,7 +56,8 @@ public class AdminController {
     @GetMapping("/export.csv")
     public ResponseEntity<byte[]> export(@RequestParam(required = false) RequestStatus status,
             @RequestParam(required = false) ServiceArea serviceArea, @RequestParam(required = false) String q) {
-        byte[] csv = CsvExport.write(service.exportRows(new RequestFilter(status, serviceArea, q), EXPORT_LIMIT));
+        var rows = service.exportRows(new RequestFilter(status, serviceArea, q), EXPORT_LIMIT);
+        byte[] csv = CsvExport.write(rows, service.notesFor(rows));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         ContentDisposition.attachment().filename("pedidos-de-proposta.csv").build().toString())

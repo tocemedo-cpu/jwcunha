@@ -6,10 +6,13 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.jwcunha.website.contact.ProposalRequest;
+import com.jwcunha.website.contact.RequestNote;
 import com.jwcunha.website.contact.RequestStatus;
 import com.jwcunha.website.contact.ServiceArea;
 
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /** Optional filters of the administrative list and export. Every field may be null. */
 public record RequestFilter(RequestStatus status, ServiceArea service, String q) {
@@ -25,7 +28,12 @@ public record RequestFilter(RequestStatus status, ServiceArea service, String q)
             }
             if (q != null && !q.isBlank()) {
                 String like = "%" + escapeLike(q.trim().toLowerCase()) + "%";
+                Subquery<Long> inNotes = query.subquery(Long.class);
+                Root<RequestNote> note = inNotes.from(RequestNote.class);
+                inNotes.select(cb.literal(1L)).where(cb.equal(note.get("requestId"), root.get("id")),
+                        cb.like(cb.lower(note.get("body")), like, '\\'));
                 all.add(cb.or(
+                        cb.exists(inNotes),
                         cb.like(cb.lower(root.get("fullName")), like, '\\'),
                         cb.like(cb.lower(root.get("company")), like, '\\'),
                         cb.like(cb.lower(root.get("email")), like, '\\'),
