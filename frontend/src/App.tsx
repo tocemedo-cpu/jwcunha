@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import About from './pages/About';
+import Admin from './pages/Admin';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
 import Hse from './pages/Hse';
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="hse-quality" element={<Hse />} />
         <Route path="mobilisation" element={<Mobilisation />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

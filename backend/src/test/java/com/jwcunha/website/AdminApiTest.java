@@ -21,6 +21,18 @@ class AdminApiTest extends IntegrationTestBase {
     }
 
     @Test
+    void browserCallsGetANoChallenge401SoNoNativeLoginDialogAppears() throws Exception {
+        mvc.perform(get("/api/admin/requests").header("X-Requested-With", "XMLHttpRequest"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                        .doesNotExist("WWW-Authenticate"));
+        // tools keep the standard challenge
+        mvc.perform(get("/api/admin/requests")).andExpect(status().isUnauthorized())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                        .string("WWW-Authenticate", org.hamcrest.Matchers.startsWith("Basic")));
+    }
+
+    @Test
     void wrongPasswordIsDenied() throws Exception {
         mvc.perform(get("/api/admin/requests").with(httpBasic(ADMIN_USER, "wrong-password-123")))
                 .andExpect(status().isUnauthorized());

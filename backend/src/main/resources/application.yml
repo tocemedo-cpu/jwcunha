@@ -59,6 +59,9 @@ app:
   rate-limit:
     max-requests: ${RATE_LIMIT_MAX:5}
     window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:600}
+  admin-throttle:
+    max-failures: 10
+    window-seconds: 900
   mail:
     enabled: ${MAIL_ENABLED:false}
     from: ${MAIL_FROM:}

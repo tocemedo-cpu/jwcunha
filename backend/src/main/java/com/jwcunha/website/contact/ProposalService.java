@@ -1,15 +1,21 @@
 package com.jwcunha.website.contact;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.jwcunha.website.admin.RequestFilter;
 import com.jwcunha.website.notification.ProposalNotifier;
 import com.jwcunha.website.notification.ProposalSaved;
 
@@ -47,8 +53,28 @@ public class ProposalService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProposalRequestView> list(Pageable pageable) {
-        return repository.findAll(pageable).map(ProposalRequestView::from);
+    public Page<ProposalRequestView> list(RequestFilter filter, Pageable pageable) {
+        return repository.findAll(filter.toSpecification(), pageable).map(ProposalRequestView::from);
+    }
+
+    /** Number of requests per status (every status present, zero when none). */
+    @Transactional(readOnly = true)
+    public Map<RequestStatus, Long> summary() {
+        Map<RequestStatus, Long> out = new EnumMap<>(RequestStatus.class);
+        for (RequestStatus s : RequestStatus.values()) {
+            out.put(s, 0L);
+        }
+        for (Object[] row : repository.countByStatus()) {
+            out.put((RequestStatus) row[0], (Long) row[1]);
+        }
+        return out;
+    }
+
+    /** Matching requests, newest first, capped so an export can never exhaust memory. */
+    @Transactional(readOnly = true)
+    public List<ProposalRequest> exportRows(RequestFilter filter, int limit) {
+        return repository.findAll(filter.toSpecification(),
+                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"))).getContent();
     }
 
     @Transactional(readOnly = true)

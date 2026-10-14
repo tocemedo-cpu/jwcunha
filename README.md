@@ -19,8 +19,7 @@ docker-compose.yml, .env.example
 - 10 content areas: Home, About, Facility / Property / Waste / Supplies & Procurement, Sectors, HSE & Quality, Mobilisation, Contact; plus a 404 page, mobile menu and footer.
 - `POST /api/contact` validates the request, stores it in PostgreSQL and returns `201` with a reference **only after the row is committed**. The UI shows success only on that response.
 - Spam controls: honeypot field and per-IP rate limit (`RATE_LIMIT_MAX` per `RATE_LIMIT_WINDOW_SECONDS`, in-memory, single instance).
-- Admin API (HTTP Basic, single account from environment, no default credentials; locked when unset):
-  `GET /api/admin/requests?page=0&size=20`, `GET /api/admin/requests/{id}`, `PATCH /api/admin/requests/{id}/status` with `{"status":"NEW|IN_REVIEW|RESPONDED|CLOSED"}`.
+- Admin API and page `/admin` (HTTP Basic, single account from environment, no default credentials; locked when unset). See *Proposal requests: storage and e-mail alerts*.
 - Everything else under `/api` is denied; only `/actuator/health` is exposed.
 - No client names, contracts, certifications, licences, statistics or years of experience are published. The public email, address and tax ID are in `frontend/src/lib/company.ts` (email and address can be overridden at build time); no telephone number is published until the company supplies one.
 
@@ -92,7 +91,10 @@ See `frontend/src/assets/photos/README.md` for the shot list. Without photos a n
    - Visitor text is only placed in the body (headers are sanitised), so it cannot inject headers.
    - Empty or unset mail variables are valid and mean "off" (hosting dashboards send unfilled variables as empty).
 3. SMTP: use the provider's SMTP host with STARTTLS on port 587 (default; set `MAIL_SSL=true` and the provider's SSL port for implicit TLS). Credentials go in the hosting dashboard / `.env`, never in the repository. Check your hosting plan's outbound SMTP policy: some plans block ports 25/465/587; if so use the provider's alternative port (often 2525).
-4. Reading requests: `GET /api/admin/requests` (HTTP Basic, see *Admin account*). There is no admin page or deletion endpoint yet.
+4. **Administration page: `/admin`** (not linked from the menu, `noindex`). Sign in with the admin account (see *Admin account*). It shows the requests with counters per status, search (name, company, e-mail, location, message), filters by status and service, the full message, a *Reply by e-mail* link, the e-mail-alert state, a status selector (New / In review / Responded / Closed) and **Export CSV** (current filters, up to 5000 rows; semicolon-separated with a UTF-8 BOM so Excel in Portuguese locales opens it correctly; cells that could run as formulas are neutralised).
+   - The browser keeps the credentials only in `sessionStorage` (gone when the tab is closed); *Sign out* clears them. Use the site over HTTPS (Render provides it) so the password is never sent in clear text.
+   - After 10 failed logins from one address in 15 minutes, further admin requests from it get `429` until the window passes.
+   - The same data is available over the API: `GET /api/admin/requests?status=&serviceArea=&q=&page=&size=`, `GET /api/admin/requests/summary`, `GET /api/admin/requests/export.csv`, `GET /api/admin/requests/{id}`, `PATCH /api/admin/requests/{id}/status`. There is no deletion endpoint yet.
 
 ## Brand identity
 Taken from the company's commercial profile (Oct 2026): JWC logo, brand green `#007E5A` (`--green`) and navy `#102F42` (`--navy`), bold sans-serif headlines (IBM Plex Sans, self-hosted), tagline *Cuidamos dos espaços. Valorizamos o património.* / *We care for spaces. We add value to property.*
