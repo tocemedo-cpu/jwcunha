@@ -63,6 +63,8 @@ services:
         sync: false
       - key: MAIL_NOTIFY_TO     # who receives the alerts, comma-separated, e.g. jw@cunha.ao
         sync: false
+      - key: REMINDER_AFTER_HOURS   # weekday-morning reminder for requests still "New" after this many hours; 0 = off
+        value: "48"
 
   # Public site: Nginx serves the React build and proxies /api to the private backend.
   - type: web
