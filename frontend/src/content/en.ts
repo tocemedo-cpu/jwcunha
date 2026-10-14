@@ -442,6 +442,14 @@ export const en = {
     loadError: 'Could not load the requests.',
     saveError: 'Could not change the status. Nothing was changed.',
     statusSaved: 'Status updated.',
+    remove: {
+      button: 'Delete request',
+      warning: 'Permanently deletes this request and its internal notes. This cannot be undone.',
+      confirm: 'Confirm permanent deletion',
+      cancel: 'Cancel',
+      done: 'Request deleted.',
+      error: 'Could not delete the request. Nothing was deleted.',
+    },
     open: 'Open',
     close: 'Close',
     detail: {

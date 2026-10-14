@@ -103,6 +103,10 @@ export async function setStatus(auth: string, id: string, status: RequestStatus)
   return res.json();
 }
 
+export async function deleteRequest(auth: string, id: string): Promise<void> {
+  await call(auth, `/${id}`, { method: 'DELETE' });
+}
+
 export async function exportCsv(auth: string, f: Filters): Promise<Blob> {
   return (await call(auth, `/export.csv${query(f)}`, { headers: { Accept: 'text/csv' } })).blob();
 }

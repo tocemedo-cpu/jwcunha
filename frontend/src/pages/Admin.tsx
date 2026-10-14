@@ -15,6 +15,7 @@ import {
   loadAuth,
   saveAuth,
   setStatus,
+  deleteRequest,
   type AdminRequest,
   type Filters,
   type Note,
@@ -124,6 +125,7 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
   const [openId, setOpenId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [exporting, setExporting] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
   const lastLoad = useRef(0);
 
   // Debounce the text search so each keystroke does not hit the server.
@@ -177,6 +179,22 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
     } catch (err) {
       if (err instanceof AuthError) onSignOut();
       else setNotice(a.saveError);
+    }
+  }
+
+  async function removeRequest(r: AdminRequest) {
+    setNotice('');
+    try {
+      await deleteRequest(auth, r.id);
+      setConfirmingDelete(null);
+      setOpenId(null);
+      setData((d) => d && { ...d, content: d.content.filter((x) => x.id !== r.id), page: { ...d.page, totalElements: Math.max(0, d.page.totalElements - 1) } });
+      setNotice(a.remove.done);
+      void refreshSummary();
+      if (data && data.content.length === 1 && page > 0) setPage(page - 1);
+    } catch (err) {
+      if (err instanceof AuthError) onSignOut();
+      else setNotice(a.remove.error);
     }
   }
 
@@ -334,6 +352,21 @@ function Dashboard({ auth, onSignOut }: { auth: string; onSignOut: () => void })
                           <dt>{a.detail.reference}</dt><dd className="admin__ref">{r.id}</dd>
                         </dl>
                         <Notes auth={auth} requestId={r.id} onSignOut={onSignOut} onCountChange={(d) => noteCountChanged(r.id, d)} dateFmt={dateFmt} />
+                        <div className="admin__danger">
+                          {confirmingDelete === r.id ? (
+                            <>
+                              <p>{a.remove.warning}</p>
+                              <span className="admin__confirm">
+                                <button type="button" className="text-link admin__remove" onClick={() => removeRequest(r)}>{a.remove.confirm}</button>
+                                <button type="button" className="text-link" onClick={() => setConfirmingDelete(null)}>{a.remove.cancel}</button>
+                              </span>
+                            </>
+                          ) : (
+                            <button type="button" className="text-link admin__remove" onClick={() => setConfirmingDelete(r.id)}>
+                              {a.remove.button}<span className="sr-only"> {r.company}</span>
+                            </button>
+                          )}
+                        </div>
                         <a className="btn btn--primary btn--sm" href={`mailto:${r.email}?subject=${encodeURIComponent(`Re: ${c.contact.form.title}`)}`}>
                           {a.detail.reply}
                         </a>

@@ -409,6 +409,14 @@ export const pt: DeepPartial<Content> = {
     loadError: 'Não foi possível carregar os pedidos.',
     saveError: 'Não foi possível alterar o estado. Nada foi alterado.',
     statusSaved: 'Estado actualizado.',
+    remove: {
+      button: 'Eliminar pedido',
+      warning: 'Elimina definitivamente este pedido e as respectivas notas internas. Não é possível desfazer.',
+      confirm: 'Confirmar eliminação definitiva',
+      cancel: 'Cancelar',
+      done: 'Pedido eliminado.',
+      error: 'Não foi possível eliminar o pedido. Nada foi eliminado.',
+    },
     open: 'Abrir',
     close: 'Fechar',
     detail: {

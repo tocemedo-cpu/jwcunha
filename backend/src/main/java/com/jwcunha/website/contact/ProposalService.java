@@ -22,6 +22,8 @@ import com.jwcunha.website.notification.ProposalSaved;
 @Service
 public class ProposalService {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProposalService.class);
+
     private final ProposalRequestRepository repository;
     private final ApplicationEventPublisher events;
     private final ProposalNotifier notifier;
@@ -108,6 +110,14 @@ public class ProposalService {
         var entity = find(id);
         entity.changeStatus(status);
         return ProposalRequestView.from(repository.saveAndFlush(entity), notes.countByRequestId(id));
+    }
+
+    /** Permanently removes a request; its internal notes go with it (FK ON DELETE CASCADE). */
+    @Transactional
+    public void delete(UUID id) {
+        repository.delete(find(id));
+        repository.flush();
+        log.info("Proposal request {} deleted by an administrator.", id);
     }
 
     private ProposalRequest find(UUID id) {
