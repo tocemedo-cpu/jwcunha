@@ -281,4 +281,57 @@ describe('admin page', () => {
       expect(within(section).getByText('Liguei ao cliente; pediu visita.')).toBeInTheDocument();
     });
   });
+  describe('delete request', () => {
+    function setupDelete(fail = false) {
+      sessionStorage.setItem('jwc.admin', basicAuth('admin', 'secret-password-1'));
+      const deletes: string[] = [];
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, init) => {
+        const u = String(url);
+        const method = (init as RequestInit | undefined)?.method ?? 'GET';
+        if (method === 'DELETE') {
+          deletes.push(u);
+          return fail ? new Response('{}', { status: 500 }) : new Response(null, { status: 204 });
+        }
+        if (u.includes('/notes')) return json([]);
+        if (u.includes('/summary')) return json(summary);
+        return json(page([row()]));
+      });
+      return deletes;
+    }
+
+    async function openRow() {
+      renderAdmin();
+      const u = userEvent.setup();
+      await screen.findByText('Alfa Energia', { selector: 'strong' });
+      await u.click(screen.getByRole('button', { name: /abrir alfa energia/i }));
+      return u;
+    }
+
+    it('needs a confirmation, then removes the row', async () => {
+      const deletes = setupDelete();
+      const u = await openRow();
+      await u.click(await screen.findByRole('button', { name: /^eliminar pedido/i }));
+      expect(screen.getByText(/não é possível desfazer/i)).toBeInTheDocument();
+      expect(deletes).toHaveLength(0);
+
+      await u.click(screen.getByRole('button', { name: /cancelar/i }));
+      expect(deletes).toHaveLength(0);
+
+      await u.click(screen.getByRole('button', { name: /^eliminar pedido/i }));
+      await u.click(screen.getByRole('button', { name: /confirmar eliminação definitiva/i }));
+      await waitFor(() => expect(screen.queryByText('Alfa Energia', { selector: 'strong' })).not.toBeInTheDocument());
+      expect(deletes).toHaveLength(1);
+      expect(deletes[0]).toMatch(/\/api\/admin\/requests\/[^/]+$/);
+      expect(screen.getByText('Pedido eliminado.')).toBeInTheDocument();
+    });
+
+    it('keeps the row and says so when the server refuses', async () => {
+      setupDelete(true);
+      const u = await openRow();
+      await u.click(await screen.findByRole('button', { name: /^eliminar pedido/i }));
+      await u.click(screen.getByRole('button', { name: /confirmar eliminação definitiva/i }));
+      expect(await screen.findByText(/nada foi eliminado/i)).toBeInTheDocument();
+      expect(screen.getByText('Alfa Energia', { selector: 'strong' })).toBeInTheDocument();
+    });
+  });
 });

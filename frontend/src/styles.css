@@ -258,6 +258,9 @@ p { margin: 0 0 1em; }
 .admin__notemeta { margin: 0 0 .15rem; font-size: .8rem; color: var(--muted); }
 .admin__notebody { margin: 0 0 .4rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 .admin__confirm { display: inline-flex; gap: 1rem; }
+.admin__danger { margin: 1.25rem 0; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.admin__danger p { margin: 0 0 .5rem; color: var(--muted); font-size: .9rem; }
+.admin__remove { color: #9b1c1c; }
 .admin__noteform .field { margin-bottom: .75rem; }
 .admin__empty { padding: 2rem 0; color: var(--muted); }
 .admin__pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
