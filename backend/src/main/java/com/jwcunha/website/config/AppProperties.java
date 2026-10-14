@@ -12,9 +12,36 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record AppProperties(Admin admin, List<String> allowedOrigins, RateLimit rateLimit, Mail mail, AdminThrottle adminThrottle) {
 
     public record Admin(String username, String passwordHash) {
+
+        private static final java.util.regex.Pattern BCRYPT = java.util.regex.Pattern.compile("^\\$2[aby]\\$\\d{2}\\$.{53}$");
+
+        /** Pasted values often carry spaces, a line break or quotes (.env files, hosting dashboards): drop them. */
+        public Admin {
+            username = clean(username);
+            passwordHash = clean(passwordHash);
+        }
+
+        static String clean(String value) {
+            if (value == null) {
+                return null;
+            }
+            String v = value.strip();
+            while (v.length() >= 2 && (v.startsWith("'") && v.endsWith("'") || v.startsWith("\"") && v.endsWith("\""))) {
+                v = v.substring(1, v.length() - 1).strip();
+            }
+            return v;
+        }
+
+        public boolean hasUsername() {
+            return username != null && !username.isBlank();
+        }
+
+        public boolean hasValidHash() {
+            return passwordHash != null && BCRYPT.matcher(passwordHash).matches();
+        }
+
         public boolean configured() {
-            return username != null && !username.isBlank()
-                    && passwordHash != null && passwordHash.startsWith("$2");
+            return hasUsername() && hasValidHash();
         }
     }
 

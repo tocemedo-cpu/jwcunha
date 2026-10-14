@@ -51,6 +51,7 @@ $pw = Read-Host "Admin password" -AsSecureString
 [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($pw)) | java -jar backend\target\website-1.0.0.jar hash-password
 ```
 Put the result in `.env` in **single quotes**: `ADMIN_PASSWORD_HASH='$2a$12$...'` and set `ADMIN_USERNAME`. Query it (the API is reachable through Nginx):
+   - If sign-in fails with a correct password, read the backend log at start-up: it says `Admin account '…' is configured.` or why the admin is locked (empty variable, or `ADMIN_PASSWORD_HASH is not a valid bcrypt hash`, with its length). A valid hash has exactly 60 characters and starts with `$2a$`. Spaces, line breaks and one pair of quotes around `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` are ignored; in hosting dashboards paste the hash **without** quotes. The hash is never written to the log.
 ```bash
 curl -u admin http://localhost/api/admin/requests
 ```
