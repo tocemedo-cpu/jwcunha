@@ -2,6 +2,8 @@ package com.jwcunha.website.config;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -36,10 +40,30 @@ public class SecurityConfig {
     UserDetailsService userDetailsService(AppProperties props) {
         var admin = props.admin();
         if (admin == null || !admin.configured()) {
+            logAdminState(admin);
             return new InMemoryUserDetailsManager();
         }
+        log.info("Admin account '{}' is configured.", admin.username());
         return new InMemoryUserDetailsManager(
                 User.withUsername(admin.username()).password(admin.passwordHash()).roles("ADMIN").build());
+    }
+
+    /** Says why the admin is locked, without ever printing the hash. */
+    private static void logAdminState(AppProperties.Admin admin) {
+        boolean user = admin != null && admin.hasUsername();
+        boolean hash = admin != null && admin.passwordHash() != null && !admin.passwordHash().isEmpty();
+        if (!user && !hash) {
+            log.info("Admin API is locked: ADMIN_USERNAME and ADMIN_PASSWORD_HASH are not set.");
+        } else if (!user) {
+            log.warn("Admin API is LOCKED: ADMIN_USERNAME is empty.");
+        } else if (!hash) {
+            log.warn("Admin API is LOCKED: ADMIN_PASSWORD_HASH is empty.");
+        } else {
+            log.warn("Admin API is LOCKED: ADMIN_PASSWORD_HASH is not a valid bcrypt hash ({} characters, starts with "
+                    + "'{}'). Generate it with 'java -jar app.jar hash-password' and paste the whole value (60 characters, "
+                    + "starting with $2a$).", admin.passwordHash().length(),
+                    admin.passwordHash().substring(0, Math.min(3, admin.passwordHash().length())));
+        }
     }
 
     @Bean
